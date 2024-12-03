@@ -1,6 +1,6 @@
 import { Controller, Get, Put, Param, Body } from '@nestjs/common';
 import { UserService } from './user.service';
-import { user } from './Models/user.model';
+import { User } from './Models/user.model';
 
 @Controller('users')
 export class UserController {
@@ -18,7 +18,7 @@ export class UserController {
   @Put(':user_Id')
   async updateProfile(
     @Param('user_Id') user_Id: string,
-    @Body() updateData: Partial<user>
+    @Body() updateData: Partial<User>
   ) {
 
     if (!updateData) {
