@@ -40,3 +40,4 @@ export class course {
   created_at: Date;
 }
 export const CourseSchema = SchemaFactory.createForClass(course);
+export type CourseDocument = HydratedDocument<course>;
