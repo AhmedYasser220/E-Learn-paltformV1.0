@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { course } from './Model/course.model';
 import { Model } from 'mongoose';
 import { CreateCourseDto } from './dto/createCourse.dto';
+import { UpdateCourseDto } from './dto/updateCourse.dto';
+import { notDeepEqual } from 'assert';
 
 @Injectable()
 export class CourseService {
@@ -38,6 +40,20 @@ export class CourseService {
       return course;
     } catch (error) {
       throw new Error('Error retrieving the course');
+    }
+  }
+
+  async update(id: string, updatedate: UpdateCourseDto): Promise<course> {
+    try {
+      const updatedCourse = this.courseModel.findByIdAndUpdate(id, updatedate, {
+        new: true,
+      });
+      if (!updatedCourse) {
+        throw new NotFoundException('course is not found ');
+      }
+      return updatedCourse;
+    } catch (error) {
+      throw new Error('Error updating the course');
     }
   }
 }

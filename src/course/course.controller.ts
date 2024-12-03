@@ -6,10 +6,12 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { course } from './Model/course.model';
 import { CreateCourseDto } from './dto/createCourse.dto';
+import { UpdateCourseDto } from './dto/updateCourse.dto';
 
 @Controller('course')
 export class CourseController {
@@ -49,6 +51,22 @@ export class CourseController {
         );
       }
       return course;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Put(':id')
+  async updateCourse(
+    @Param('id') id: string,
+    @Body() courseData: UpdateCourseDto,
+  ): Promise<course> {
+    try {
+      const updatedCourse = await this.courseService.update(id, courseData);
+      if (!updatedCourse) {
+        throw new HttpException('course not found', HttpStatus.NOT_FOUND);
+      }
+      return updatedCourse;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
