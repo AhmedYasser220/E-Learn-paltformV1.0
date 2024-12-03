@@ -9,6 +9,7 @@ export class CourseService {
   constructor(
     @InjectModel(course.name) private readonly courseModel: Model<course>,
   ) {}
+
   async create(courseData: CreateCourseDto): Promise<course> {
     try {
       const newCourse = new this.courseModel(courseData);
@@ -17,6 +18,14 @@ export class CourseService {
     } catch (error) {
       console.error('Error saving course:', error);
       throw new Error('error creating course !!');
+    }
+  }
+
+  async findAll(): Promise<course[]> {
+    try {
+      return await this.courseModel.find();
+    } catch (error) {
+      throw new Error('can not find courses');
     }
   }
 }

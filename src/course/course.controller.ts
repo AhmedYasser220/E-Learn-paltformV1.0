@@ -24,4 +24,17 @@ export class CourseController {
       );
     }
   }
+
+  @Get()
+  async getAllCourses(): Promise <course[]>{
+try{
+  return await this.courseService.findAll();
+
 }
+catch(error){
+throw new HttpException('Failed to retrive courses',HttpStatus.INTERNAL_SERVER_ERROR);
+
+}
+  }
+}
+
