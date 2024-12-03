@@ -8,12 +8,19 @@ import { ModulesModule } from './modules/modules.module';
 import { QuizzesModule } from './quizzes/quizzes.module';
 import { ResponsesModule } from './responses/responses.module';
 import { ProgressModule } from './progress/progress.module';
-import { BackupModule } from './backup/backup.module';
-
-
 
 @Module({
-  imports: [UserModule,CourseModule,ModulesModule,QuizzesModule,ResponsesModule,ProgressModule,BackupModule,MongooseModule.forRoot('mongodb+srv://Wightnight120:Qazxsw!!@e-learndb.ksmzg.mongodb.net/')],
+  imports: [
+    UserModule,
+    CourseModule,
+    ModulesModule,
+    QuizzesModule,
+    ResponsesModule,
+    ProgressModule,
+    MongooseModule.forRoot(
+      'mongodb+srv://Wightnight120:Qazxsw!!@e-learndb.ksmzg.mongodb.net/',
+    ),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
