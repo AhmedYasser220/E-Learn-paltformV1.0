@@ -15,6 +15,7 @@ export class CourseService {
       const savedCourse = await newCourse.save();
       return savedCourse.toObject();
     } catch (error) {
+      console.error('Error saving course:', error);
       throw new Error('error creating course !!');
     }
   }

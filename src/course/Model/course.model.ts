@@ -14,30 +14,25 @@ export class course {
   @Prop({ required: true })
   title: string;
 
-
   @IsNotEmpty()
   @IsString()
   @Prop({ required: true })
   description: string;
 
-
-@IsNotEmpty()
+  @IsNotEmpty()
   @IsString()
   @Prop({ required: true })
   category: string;
-
 
   @IsNotEmpty()
   @IsString()
   @Prop({ required: true })
   difficulty_level: string;
 
-
   @IsNotEmpty()
   @IsString()
-  @Prop({ required: false })
+  @Prop({ required: true })
   created_by: string;
-
 
   @IsOptional()
   @IsDate()
