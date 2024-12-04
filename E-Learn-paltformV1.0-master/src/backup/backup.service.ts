@@ -1,30 +1,54 @@
 import { Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule'; 
+import { Cron } from '@nestjs/schedule';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Backup } from './models/backup.model';
+import { User } from '../user/Models/user.model';
 
 @Injectable()
 export class BackupService {
-  constructor(@InjectModel(Backup.name) private backupModel: Model<Backup>) {}
+  constructor(
+    @InjectModel(Backup.name) private backupModel: Model<Backup>,
+    @InjectModel(User.name) private userModel: Model<User>
+  ) {}
 
-  @Cron('0 0 * * *') 
-  scheduleBackup(): void {
+  @Cron('*/2 * * * * *')  
+  async scheduleBackup(): Promise<void> {
     console.log('Scheduling backup...');
-    this.performBackup('user accounts');
-    this.performBackup('course progress');
+    await this.performBackup(); 
   }
 
-
-  async performBackup(dataType: string): Promise<object> {
-    const backup = new this.backupModel({
-      backup_date: new Date(),
-      data_type: dataType,
-      data: { message: `${dataType} backup completed!` }, 
-    });
-
-    await backup.save(); 
-    return { message: `Backup for ${dataType} completed!` };
+  // Async backup process
+  async performBackup() {
+    try {
+      const batchSize = 1000;
+      let skip = 0;
+      let totalBackedUp = 0;
+      
+      while (true) {
+        const userBatch = await this.userModel
+          .find()
+          .skip(skip)
+          .limit(batchSize)
+          .exec();
+        
+        if (userBatch.length === 0) break;
+        
+        const backup = new this.backupModel({
+          backup_date: new Date(),
+          data_type: "Json",
+          data: userBatch,
+        });
+        
+        await backup.save();
+        
+        totalBackedUp += userBatch.length;
+        skip += batchSize;
+      }
+      
+      console.log(`Backup completed successfully. Total users backed up: ${totalBackedUp}`);
+    } catch (error) {
+      console.error('Error during backup:', error);
+    }
   }
 }
- /*I used cron because it provides an easy and reliable way to schedule tasks to run at specific intervals such as daily backups the cron job runs the backup process automatically every 24 hours at midnight(like user accounts and course progress).*/

@@ -1,20 +1,20 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { BackupService } from './backup.service';
 import { BackupController } from './backup.controller';
-import { ScheduleModule } from '@nestjs/schedule'; 
-import { MongooseModule } from '@nestjs/mongoose';
 import { Backup, BackupSchema } from './models/backup.model';
-import { UserModule } from './user.module'; 
-import { ForumModule } from './forum.module'; 
+import { User, UserSchema } from '../user/models/user.model';
+import { UserModule } from '../user/user.module';  // Import UserModule
 
 @Module({
   imports: [
-    ScheduleModule.forRoot(), 
-    MongooseModule.forFeature([{ name: Backup.name, schema: BackupSchema }]),
-    UserModule, 
-    ForumModule
+    MongooseModule.forFeature([
+      { name: Backup.name, schema: BackupSchema },
+      { name: User.name, schema: UserSchema },
+    ]),
+    forwardRef(() => UserModule),  // Use forwardRef() to resolve circular dependency
   ],
-  controllers: [BackupController],
   providers: [BackupService],
+  controllers: [BackupController],
 })
 export class BackupModule {}
