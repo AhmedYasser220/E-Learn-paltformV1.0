@@ -1,25 +1,19 @@
-import {Prop,Schema,SchemaFactory} from '@nestjs/mongoose'
-import  Mongoose,{HydratedDocument}  from "mongoose"
-
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
 @Schema()
-export class progress{
+export class Progress extends Document {
+  @Prop()
+  courseId: string;
 
-    @Prop()
-    progress_id: String;
-    
-    @Prop()
-    user_id: String;
-    
-    @Prop()
-    course_id: String;
+  @Prop()
+  userId: string;
 
-    @Prop()
-     completion_percentage: Number;
+  @Prop()
+  progress: number;
 
-    @Prop()
-    last_accessed: Date;
-
+  @Prop()
+  completedAt: Date;
 }
-export const progressSchema = SchemaFactory.createForClass(progress);
 
+export const ProgressSchema = SchemaFactory.createForClass(Progress);
