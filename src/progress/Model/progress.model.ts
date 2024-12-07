@@ -3,19 +3,19 @@ import Mongoose, { HydratedDocument } from 'mongoose';
 
 @Schema()
 export class progress {
-  @Prop()
-  progress_id: String;
+  @Prop({ required: true })
+  progress_id: string;
 
-  @Prop()
-  user_id: String;
+  @Prop({ required: true })
+  user_id: string;
 
-  @Prop()
-  course_id: String;
+  @Prop({ required: true })
+  course_id: string;
 
-  @Prop()
-  completion_percentage: Number;
+  @Prop({ required: true })
+  completion_percentage: number;
 
-  @Prop()
+  @Prop({ required: true })
   last_accessed: Date;
 }
 export const progressSchema = SchemaFactory.createForClass(progress);

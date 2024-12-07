@@ -4,7 +4,7 @@ import { course } from './Model/course.model';
 import { Model } from 'mongoose';
 import { CreateCourseDto } from './dto/createCourse.dto';
 import { UpdateCourseDto } from './dto/updateCourse.dto';
-import { notDeepEqual } from 'assert';
+
 
 @Injectable()
 export class CourseService {
@@ -56,4 +56,20 @@ export class CourseService {
       throw new Error('Error updating the course');
     }
   }
+
+async delete (id:string):Promise<course>{
+  try{
+    const deletedCourse = this.courseModel.findByIdAndDelete(id);
+    if(!deletedCourse){
+      throw new NotFoundException('course is not found');
+    }
+     
+    return deletedCourse;
+  }
+
+catch(error){
+throw new Error('error in deleting the course')
+}
+
+}
 }

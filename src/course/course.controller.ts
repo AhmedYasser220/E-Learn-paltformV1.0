@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -67,6 +68,19 @@ export class CourseController {
         throw new HttpException('course not found', HttpStatus.NOT_FOUND);
       }
       return updatedCourse;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Delete(':id')
+  async deleteCourse(@Param('id') id: string): Promise<{ message: string }> {
+    try {
+      const deletedCourse = await this.courseService.delete(id);
+      if (!deletedCourse) {
+        throw new HttpException('course not found', HttpStatus.NOT_FOUND);
+      }
+      return { message: 'Course successfully deleted' };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

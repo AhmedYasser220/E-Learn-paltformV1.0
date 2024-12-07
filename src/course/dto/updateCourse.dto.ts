@@ -5,3 +5,4 @@ export class UpdateCourseDto {
   difficulty_level?: string;
   updated_at?: Date;
 }
+
