@@ -1,17 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable , InternalServerErrorException, NotFoundException} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Course, CourseDocument } from './Model/course.model';
+import { UpdateCourseDto } from './dto/course.dto';
 
 @Injectable()
 export class CourseService {
   constructor(@InjectModel(Course.name) private courseModel: Model<CourseDocument>) {}
 
-  // Update Course and Automatically Save Previous Version
-  async updateCourse(course_Id: string, updateData: Record<string, any>): Promise<Course> {
+  // Update Course 
+  async updateCourse(course_Id: string, updateData:UpdateCourseDto): Promise<Course> {
+    try {
     // Fetch the course
     const course = await this.courseModel.findOne({ course_Id }).exec();
-    if (!course) throw new Error(`Course with ID ${course_Id} not found`);
+    if (!course) throw new NotFoundException(`Course with ID ${course_Id} not found`);
 
     // Save the current state as a version
     const currentVersion = {
@@ -33,12 +35,17 @@ export class CourseService {
     });
 
     return course.save();
+  } catch (error) {
+    throw new InternalServerErrorException(
+      `An error occurred while updating the course: ${error.message}`,
+    );
   }
+}
 
   // Get All Versions for a Course
   async getCourseVersions(course_Id: string): Promise<Course['versions']> {
     const course = await this.courseModel.findOne({ course_Id }).exec();
-    if (!course) throw new Error(`Course with ID ${course_Id} not found`);
+    if (!course) throw new NotFoundException(`Course with ID ${course_Id} not found`);
     return course.versions;
   }
 }
