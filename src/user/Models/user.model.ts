@@ -3,7 +3,7 @@ import  Mongoose,{HydratedDocument}  from "mongoose"
 
 
 @Schema()
-export class User{
+export class user{
     @Prop()
     user_Id: string;
     
@@ -26,5 +26,5 @@ export class User{
     created_at: Date;
 
 }
-export const UserSchema = SchemaFactory.createForClass(User);
+export const UserSchema = SchemaFactory.createForClass(user);
 

@@ -2,7 +2,7 @@ import { Injectable , InternalServerErrorException, NotFoundException} from '@ne
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Course, CourseDocument } from './Model/course.model';
-import { UpdateCourseDto } from './dto/course.dto';
+import { UpdateCourseDto } from './dto/updateCourse.dto';
 
 @Injectable()
 export class CourseService {

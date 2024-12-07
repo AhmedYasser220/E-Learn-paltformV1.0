@@ -1,6 +1,6 @@
 import { Controller, Put, Get, Param, Body ,InternalServerErrorException,} from '@nestjs/common';
 import { CourseService } from './course.service';
-import { UpdateCourseDto } from './dto/course.dto';
+import { UpdateCourseDto } from './dto/updateCourse.dto';
 @Controller('courses')
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
