@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param } from '@nestjs/common';
+import { Controller, Patch, Get, Body, Param } from '@nestjs/common';
 import { ProgressService } from './progress.service';
 import { CreateProgressDto } from './dto/create-progress.dto';
 import { GetProgressDto } from './dto/get-progress.dto';
@@ -9,7 +9,7 @@ export class ProgressController {
   constructor(private readonly progressService: ProgressService) {}
 
   // Track or update progress of a course for a user
-  @Post('track')
+  @Patch('track')
   async trackProgress(@Body() createProgressDto: CreateProgressDto): Promise<Progress> {
     return this.progressService.createOrUpdateProgress(createProgressDto);
   }
