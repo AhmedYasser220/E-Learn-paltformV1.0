@@ -6,4 +6,5 @@ export class CreateCourseDto {
   difficulty_level: string;
   created_by: string;
   created_at?: Date;
+  multimedia_resources?: string[]; 
 }

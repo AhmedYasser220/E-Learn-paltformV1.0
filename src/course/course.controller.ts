@@ -1,19 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   HttpException,
   HttpStatus,
+  NotFoundException,
   Param,
   Post,
   Put,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { course } from './Model/course.model';
 import { CreateCourseDto } from './dto/createCourse.dto';
 import { UpdateCourseDto } from './dto/updateCourse.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('course')
 export class CourseController {
@@ -74,6 +79,8 @@ export class CourseController {
     }
   }
 
+  
+
   @Delete(':id')
   async deleteCourse(@Param('id') id: string): Promise<{ message: string }> {
     try {
@@ -86,4 +93,20 @@ export class CourseController {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+
+@Post(':id/upload')
+@UseInterceptors(FileInterceptor('file'))
+async uploadFile(@Param('id') id:string ,@UploadedFile() file:Express.Multer.File ,@Body() body: any){
+  console.log('Received file:', file);
+  console.log('Request Body:', body);
+  if(!file){
+    throw new BadRequestException('No file uploaded');
+  
+  }
+  const filePath = `uploads/${file.filename}`;
+  await this.courseService.addMultimediaResource(id,filePath);
+  return {message:'file uploaded succsesfully ',filePath};
 }
+
+}
+

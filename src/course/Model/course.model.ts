@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsDate, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import Mongoose, { HydratedDocument } from 'mongoose';
@@ -38,6 +39,13 @@ export class course {
   @IsDate()
   @Prop({ required: false })
   created_at: Date;
+
+
+  @IsOptional()
+  @Prop({ type: [String], required: false })
+  multimedia_resources?: string[];
 }
+
+
 export const CourseSchema = SchemaFactory.createForClass(course);
 export type CourseDocument = HydratedDocument<course>;
