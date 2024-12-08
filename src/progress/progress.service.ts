@@ -14,8 +14,7 @@ export class ProgressService {
     @InjectModel(progress.name) private readonly progressModel: Model<progress>,
     @InjectModel(course.name) private readonly courseModel: Model<course>,
     @InjectModel(user.name) private readonly userModel: Model<user>,
-    @InjectModel(responses.name)
-    private readonly responseModel: Model<responses>,
+    @InjectModel(responses.name) private readonly responseModel: Model<responses>,
     @InjectModel(quizzes.name) private readonly quizModel: Model<quizzes>,
   ) {}
 
