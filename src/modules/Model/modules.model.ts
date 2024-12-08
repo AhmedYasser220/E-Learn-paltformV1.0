@@ -6,19 +6,19 @@ import  Mongoose,{HydratedDocument}  from "mongoose"
 export class modules{
 
     @Prop()
-    module_id: String;
+    module_id: string;
     
     @Prop()
-    course_id: String;
+    course_id: string;
 
     @Prop()
-    title: String;
+    title: string;
 
     @Prop()
-    content: String;
+    content: string;
 
     @Prop()
-    resources: String [];
+    resources: string [];
 
     @Prop()
     created_at: Date;

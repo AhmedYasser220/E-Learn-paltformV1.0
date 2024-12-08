@@ -8,7 +8,7 @@ import { ModulesModule } from './modules/modules.module';
 import { QuizzesModule } from './quizzes/quizzes.module';
 import { ResponsesModule } from './responses/responses.module';
 import { ProgressModule } from './progress/progress.module';
-
+import { configDotenv } from 'dotenv';
 @Module({
   imports: [
     UserModule,
@@ -17,9 +17,7 @@ import { ProgressModule } from './progress/progress.module';
     QuizzesModule,
     ResponsesModule,
     ProgressModule,
-    MongooseModule.forRoot(
-      'mongodb+srv://Wightnight120:Qazxsw!!@e-learndb.ksmzg.mongodb.net/',
-    ),
+    MongooseModule.forRoot(process.env.MONGOURI),
   ],
   controllers: [AppController],
   providers: [AppService],
