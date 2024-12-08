@@ -1,11 +1,35 @@
 import { Response } from 'express';
-import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { ProgressService } from './progress.service';
 import { InstructorAnalyticsDto } from './dto/instructoranalytics.dto';
+import { CreateProgressDto } from './dto/create-progress.dto';
+import { progress } from './Model/progress.model';
 
 @Controller('progress')
 export class ProgressController {
   constructor(private readonly progressService: ProgressService) {}
+
+  @Post('track')
+  async trackProgress(@Body() createProgressDto: CreateProgressDto): Promise<progress> {
+    return this.progressService.createOrUpdateProgress(createProgressDto);
+  }
+
+  // Get the progress of all courses for a user
+  @Get('user/:userId')
+  async getUserProgress(@Param('userId') userId: string): Promise<progress[]> {
+    return this.progressService.getUserProgress(userId);
+  }
+
+  // Get the progress of a specific course for a user
+  @Get('user/:userId/course/:courseId')
+  async getCourseProgress(
+    @Param('userId') userId: string,
+    @Param('courseId') courseId: string,
+  ): Promise<progress | null> {
+    return this.progressService.getCourseProgress(userId, courseId);
+  }
+
+//--------------------------------------------------------------------------------------
 
   @Get('analytics/:instructorId')
   async getInstructorAnalytics(

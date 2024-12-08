@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { responses } from './../responses/Model/responses.model';
 import { quizzes } from './../quizzes/Model/quizzes.model';
 import { course, CourseSchema } from './../course/Model/course.model';
@@ -7,6 +8,7 @@ import { Model } from 'mongoose';
 import { progress } from './Model/progress.model';
 import { user } from 'src/user/Models/user.model';
 import { InstructorAnalyticsDto } from './dto/instructoranalytics.dto';
+import { CreateProgressDto } from './dto/create-progress.dto';
 
 @Injectable()
 export class ProgressService {
@@ -14,10 +16,50 @@ export class ProgressService {
     @InjectModel(progress.name) private readonly progressModel: Model<progress>,
     @InjectModel(course.name) private readonly courseModel: Model<course>,
     @InjectModel(user.name) private readonly userModel: Model<user>,
-    @InjectModel(responses.name) private readonly responseModel: Model<responses>,
+    @InjectModel(responses.name)
+    private readonly responseModel: Model<responses>,
     @InjectModel(quizzes.name) private readonly quizModel: Model<quizzes>,
   ) {}
 
+  // Create or update progress for a user on a course
+  async createOrUpdateProgress(
+    createProgressDto: CreateProgressDto,
+  ): Promise<progress> {
+    const { userId, courseId, completion_percentage, completedAt } =
+      createProgressDto;
+
+    // Check if progress record already exists
+    const existingProgress = await this.progressModel.findOne({
+      userId,
+      courseId,
+    });
+
+    if (existingProgress) {
+      // Update the existing progress record
+      existingProgress.completion_percentage = createProgressDto.completion_percentage;
+      existingProgress.completedAt = completedAt;
+      return existingProgress.save();
+    } else {
+      // Create a new progress record
+      const newProgress = new this.progressModel(createProgressDto);
+      return newProgress.save();
+    }
+  }
+
+  // Get the user's progress in all courses
+  async getUserProgress(userId: string): Promise<progress[]> {
+    return this.progressModel.find({ userId }).exec();
+  }
+
+  // Get progress for a specific course of a user
+  async getCourseProgress(
+    userId: string,
+    courseId: string,
+  ): Promise<progress | null> {
+    return this.progressModel.findOne({ userId, courseId }).exec();
+  }
+
+  //-----------------------------------------------------------------------------------------
   async getInstructorAnalytics(
     instructorId: string,
   ): Promise<InstructorAnalyticsDto> {
