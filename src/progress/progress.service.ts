@@ -6,7 +6,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { progress } from './Model/progress.model';
-import { user } from 'src/user/Models/user.model';
+import { user } from 'src/user/Models/user.schema';
 import { InstructorAnalyticsDto } from './dto/instructoranalytics.dto';
 import { CreateProgressDto } from './dto/create-progress.dto';
 
@@ -36,7 +36,8 @@ export class ProgressService {
 
     if (existingProgress) {
       // Update the existing progress record
-      existingProgress.completion_percentage = createProgressDto.completion_percentage;
+      existingProgress.completion_percentage =
+        createProgressDto.completion_percentage;
       existingProgress.completedAt = completedAt;
       return existingProgress.save();
     } else {
@@ -64,10 +65,7 @@ export class ProgressService {
     instructorId: string,
   ): Promise<InstructorAnalyticsDto> {
     // Validate the instructor
-    const instructor = await this.getUserByIdAndRole(
-      instructorId,
-      'instructor',
-    );
+    const instructor = await this.userModel.findOne({ _id: instructorId });
 
     // Fetch all courses created by the instructor
     const courses = await this.courseModel.find({ created_by: instructorId });
@@ -99,13 +97,6 @@ export class ProgressService {
   }
 
   // Validate user by ID and role
-  async getUserByIdAndRole(userId: string, role: string) {
-    const user = await this.userModel.findOne({ user_Id: userId, role });
-    if (!user) {
-      throw new NotFoundException('User with the specified role not found.');
-    }
-    return user;
-  }
 
   async fetchProgressByCourseIds(courseIDs: string[]) {
     const progresses = [];
