@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -7,69 +8,47 @@ import {
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { registerRequestDto } from './Dtos/registerRequestDto';
-import { signInDto } from './Dtos/signInDto';
-import { User } from 'src/user/Models/user.schema';
-
+import { ObjectId, Types } from 'mongoose';
+import { RegisterRequestDto } from './dto/RegisterRequestDto';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UserService,
-    private readonly jwtService: JwtService,
+    private userService: UserService,
+    private jwtService: JwtService,
   ) {}
-
-  // User Registration
-  async register(registerDto: registerRequestDto): Promise<string> {
-    // Check if the email already exists
-    const existingUser = await this.usersService.findByEmail(registerDto.email);
+  async register(user: RegisterRequestDto): Promise<string> {
+    const existingUser = await this.userService.findByEmail(user.email);
     if (existingUser) {
-      throw new ConflictException('Email already exists');
+      throw new ConflictException('email already exists');
     }
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(registerDto.password_hash, 10);
-
-    // Create the new user
-    const newUser: Partial<User> = {
-      email: registerDto.email,
-      password_hash: hashedPassword,
-      role: registerDto.role || 'student', // Default role if not provided
-    };
-
-    // Save the user to the database
-    await this.usersService.create(newUser);
-
-    return 'User registered successfully';
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+    const newUser: RegisterRequestDto = { ...user, password: hashedPassword };
+    await this.userService.create(newUser);
+    return 'registered successfully';
   }
 
-  // User Sign In
-  async signIn(signInDto: signInDto): Promise<{
+  async signIn(
+    email: string,
+    password: string,
+  ): Promise<{
     access_token: string;
-    payload: { userid: string; role: string };
+    payload: { userid: Types.ObjectId; role: string };
   }> {
-    // Find the user by email
-    const user = await this.usersService.findByEmail(signInDto.email);
+    const user = await this.userService.findByEmail(email);
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('user not found');
     }
-
-    // Validate the password
-    const isPasswordValid = await bcrypt.compare(
-      signInDto.password,
-      user.password_hash,
-    );
+    console.log('password:', user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    console.log(await bcrypt.compare(password, user.password));
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Prepare the payload for the JWT
     const payload = { userid: user._id, role: user.role };
 
-    // Generate the JWT
-    const accessToken = await this.jwtService.signAsync(payload);
-
     return {
-      access_token: accessToken,
+      access_token: await this.jwtService.signAsync(payload),
       payload,
     };
   }
