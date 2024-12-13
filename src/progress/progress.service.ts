@@ -38,6 +38,9 @@ export class ProgressService {
       // Update the existing progress record
       existingProgress.completion_percentage =
         createProgressDto.completion_percentage;
+      if (existingProgress.completion_percentage >= 100) {
+        existingProgress.courseCompleted = true;
+      }
       existingProgress.completedAt = completedAt;
       return existingProgress.save();
     } else {
@@ -64,88 +67,63 @@ export class ProgressService {
   async getInstructorAnalytics(
     instructorId: string,
   ): Promise<InstructorAnalyticsDto> {
-    // Validate the instructor
     const instructor = await this.userModel.findOne({ _id: instructorId });
+  if (!instructor) {
+    throw new NotFoundException('Instructor not found.');
+  }
 
-    // Fetch all courses created by the instructor
-    const courses = await this.courseModel.find({ created_by: instructorId });
-    if (!courses.length) {
-      throw new NotFoundException('No courses found for the instructor.');
-    }
-    const courseIds = courses.map((course) => course.course_Id);
-    const progresses = await this.fetchProgressByCourseIds(courseIds);
-    const totalStudents = courses.length;
+  // Fetch all courses created by the instructor
+  const courses = await this.courseModel.find({ created_by: instructorId });
+  if (!courses.length) {
+    throw new NotFoundException('No courses found for the instructor.');
+  }
+  const courseIds = courses.map((course) => course.course_Id);
 
-    // Calculate progress metrics
-    const averageCompletionRate = progresses.reduce(
-      (sum, progress) => sum + progress.completion_percentage,
-      0,
-    );
+  // Fetch progress records for all courses created by the instructor
+  const progresses = await this.progressModel.find({ courseId: { $in: courseIds } });
 
-    const averageAssessmentScore =
-      await this.getAverageAssessmentScore(courseIds);
+  // Total number of students who have progress records
+  const totalStudents = progresses.length;
 
+  // Filter progress records for completed courses
+  const completedProgresses = progresses.filter(
+    (progress) => progress.completion_percentage === 100,
+  );
+
+  // Calculate completion rate
+  const totalCompleted = completedProgresses.length;
+  const completionRate = totalStudents > 0 ? (totalCompleted / totalStudents) * 100 : 0;
+
+  // Calculate average assessment score
+  const averageAssessmentScore = await this.calculateAverageAssessmentScore(courseIds);
+  
     return {
       instructorId,
       instructorName: instructor.name,
       instructorEmail: instructor.email,
       totalCourses: courses.length,
       totalStudents,
-      averageCompletionRate,
+      averageCompletionRate : completionRate,
       averageAssessmentScore,
     };
   }
-
-  // Validate user by ID and role
-
-  async fetchProgressByCourseIds(courseIDs: string[]) {
-    const progresses = [];
-    for (const courseID of courseIDs) {
-      // Fetch progress records for the course
-      const courseProgress = await this.progressModel.find({
-        course_id: courseID,
-      });
-      progresses.push(...courseProgress);
-    }
-    return progresses;
+  
+  private async calculateAverageAssessmentScore(courseIds: string[]): Promise<number> {
+    // Fetch all quizzes for the given course IDs
+    const quizzes = await this.quizModel.find({ module_id: { $in: courseIds } });
+  
+    if (!quizzes.length) return 0;
+  
+    // Fetch all responses for the quizzes
+    const quizIds = quizzes.map((quiz) => quiz.quiz_id);
+    const responses = await this.responseModel.find({ quiz_id: { $in: quizIds } });
+  
+    if (!responses.length) return 0;
+  
+    // Calculate the total score and the number of responses
+    const totalScore = responses.reduce((sum, response) => sum + Number(response.score || 0), 0);
+    const totalResponses = responses.length;
+  
+    return totalResponses > 0 ? totalScore / totalResponses : 0;
   }
-
-  async getAverageAssessmentScore(courseIDs: string[]) {
-    const quizzes = [];
-    for (const courseID of courseIDs) {
-      const courseQuizzes = await this.fetchQuizzesByCourseId(courseID);
-      quizzes.push(...courseQuizzes);
-    }
-
-    const responses = [];
-    for (const quiz of quizzes) {
-      const quizResponses = await this.fetchResponsesByQuizId(quiz.quiz_id);
-      responses.push(...quizResponses);
-    }
-
-    const totalScore = responses.reduce(
-      (sum, response) => sum + (response.score || 0),
-      0,
-    );
-    return totalScore / Math.max(responses.length, 1);
-  }
-
-  async fetchQuizzesByCourseId(courseID: string) {
-    try {
-      const quizzes = this.quizModel.find({ module_id: courseID });
-      return quizzes;
-    } catch (error) {
-      console.error(`Error fetching quizzes for course ID ${courseID}:`, error);
-      throw new Error('Error fetching quizzes');
-    }
-  }
-  private async fetchResponsesByQuizId(quizId: string) {
-    try {
-      const responses = await this.responseModel.find({ quiz_id: quizId });
-      return responses;
-    } catch (error) {
-      console.error(`Error fetching responses for quiz ID ${quizId}:`, error);
-      throw new Error('Error fetching responses');
-    }
-  }
-}
+}  

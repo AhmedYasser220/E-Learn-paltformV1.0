@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsDate } from 'class-validator';
+import { IsString, IsNumber, IsDate, IsBoolean } from 'class-validator';
 
 export class CreateProgressDto {
   @IsString()
@@ -13,6 +13,9 @@ export class CreateProgressDto {
   @IsDate()
   completedAt: Date;
 
-
-
+  @IsBoolean()
+  courseCompleted: boolean;
 }
+
+
+

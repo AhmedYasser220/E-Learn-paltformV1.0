@@ -14,6 +14,9 @@ export class progress extends Document {
 
   @Prop()
   completedAt: Date;
+
+  @Prop()
+  courseCompleted: boolean = false;
 }
 
 export const ProgressSchema = SchemaFactory.createForClass(progress);
