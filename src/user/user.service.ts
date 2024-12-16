@@ -46,4 +46,26 @@ export class UserService {
   async delete(id: string): Promise<UserDocument> {
     return await this.UserModel.findByIdAndDelete(id); // Find and delete the student
   }
+
+  // View personal info (User Profile Management)
+  async viewProfile(id: string): Promise<UserDocument> {
+    // Fetch the user's profile information by ID
+    const userProfile = await this.UserModel.findById(id);
+    if (!userProfile) {
+      throw new Error(`User with ID ${id} not found`); // If no user found, throw an error
+    }
+    return userProfile; // Return the user's profile data
+  }
+
+  // Update personal info (User Profile Management)
+  async updateProfile(id: string, updateData: updateUserDTo): Promise<UserDocument> {
+    // Find the user by ID and update their profile
+    const updatedUser = await this.UserModel.findByIdAndUpdate(id, updateData, {
+      new: true, // Return the updated document
+    });
+    if (!updatedUser) {
+      throw new Error('Unable to update user profile'); 
+    }
+    return updatedUser; 
+  }
 }

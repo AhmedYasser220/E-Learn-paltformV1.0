@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Module, ModuleDocument} from './Model/modules.model';
+import { Module, ModuleDocument, Question } from './Model/modules.model';
 import { Model } from 'mongoose';
 import { AddQuestionDto } from './dto/addQuestion.dto';
 @Injectable()
@@ -34,24 +34,39 @@ export class ModulesService {
       throw new NotFoundException(`Module with ID ${questionDto.module_id} not found`);
     }
   
-    // Iterate through each question in the question array
-    questionDto.question.forEach(q => {
+    // Iterate through the questions in the DTO and map them to the `Question` schema
+    questionDto.question.forEach((q) => {
       const newQuestion = {
         question: q.question,
         difficulty: q.difficulty,
         options: q.options,
         correctAnswer: q.correctAnswer,
         type: q.type,
-      };
+        module_id: questionDto.module_id,
+        course_id: q.course_id || module.course_id || null,
+        title: q.title || null,
+        content: q.content || null,
+        resources: q.resources || [],
+        created_at: q.created_at || new Date(),
+      } as Question;
+      
+  
+      // Add the question to the questionBank
       module.questionBank.push(newQuestion);
     });
   
-    return module.save(); // Save the updated module with new questions
+    // Save the updated module
+    return module.save();
   }
-  // get modules by id 
-  async getModuleById(module_id: string): Promise<ModuleDocument | null> {
-    return this.moduleModel.findById(module_id).exec();
+  
+  async getModuleById(module_id: string): Promise<ModuleDocument> {
+    const module = await this.moduleModel.findById(module_id).exec();
+    if (!module) {
+      throw new NotFoundException(`Module with ID ${module_id} not found`);
+    }
+    return module;
   }
+  
   
 
 }

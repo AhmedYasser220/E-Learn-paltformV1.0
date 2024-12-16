@@ -1,36 +1,36 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-// Define the question schema
-@Schema()
-class Question {
+export class Question {
   @Prop({ required: true })
-  question: string; // Question content
+  question: string;
 
-    @Prop()
-    module_id: string;
-    
-    @Prop()
-    course_id: string;
+  @Prop()
+  module_id: string;
 
-    @Prop()
-    title: string;
+  @Prop()
+  course_id: string;
 
-    @Prop()
-    content: string;
+  @Prop()
+  title: string;
 
-    @Prop()
-    resources: string [];
+  @Prop()
+  content: string;
 
-    @Prop()
-    created_at: Date;
+  @Prop()
+  resources: string[];
+
+  @Prop()
+  created_at: Date;
 
   @Prop({ required: true })
-  type: string; // Question type (e.g., 'MCQ', 'True/False', etc.)
+  type: string;
+  @Prop({ required: true })
+  difficulty: number; // Add difficulty field to the schema
 }
 
-// Create the Question schema
-const QuestionSchema = SchemaFactory.createForClass(Question);
+export const QuestionSchema = SchemaFactory.createForClass(Question);
+export type QuestionDocument = HydratedDocument<Question>;
 
 // Define the modules schema
 @Schema()
