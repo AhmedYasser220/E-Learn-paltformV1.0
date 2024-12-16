@@ -63,4 +63,31 @@ export class UserController {
     const deletedStudent = await this.studentService.delete(id);
     return deletedStudent;
   }
+
+
+
+  // View personal info (User Profile Management)
+  @Get('profile')
+  // View the current user's profile (personal info)
+  async viewProfile(@Req() { user }): Promise<user> {
+    const student = await this.studentService.findById(user.userid);
+    if (!student) {
+      throw new Error(`User with ID ${user.userid} not found`);
+    }
+    return student; // Return user's profile info
+  }
+
+  // Update personal info (User Profile Management)
+  @Put('profile')
+  // Update the current user's profile (personal info)
+  async updateProfile(
+    @Req() { user },
+    @Body() updateData: updateUserDTo,
+  ) {
+    const updatedStudent = await this.studentService.update(user.userid, updateData);
+    if (!updatedStudent) {
+      throw new Error('Unable to update profile');
+    }
+    return updatedStudent; // Return the updated profile
+  }
 }
