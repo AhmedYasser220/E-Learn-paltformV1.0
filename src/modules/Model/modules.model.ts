@@ -7,14 +7,23 @@ class Question {
   @Prop({ required: true })
   question: string; // Question content
 
-  @Prop({ required: true })
-  difficulty: number; // Difficulty level (1 = Easy, 2 = Medium, 3 = Hard)
+    @Prop()
+    module_id: string;
+    
+    @Prop()
+    course_id: string;
 
-  @Prop({ required: true })
-  options: string[]; // Answer options
+    @Prop()
+    title: string;
 
-  @Prop({ required: true })
-  correctAnswer: string; // Correct answer
+    @Prop()
+    content: string;
+
+    @Prop()
+    resources: string [];
+
+    @Prop()
+    created_at: Date;
 
   @Prop({ required: true })
   type: string; // Question type (e.g., 'MCQ', 'True/False', etc.)
