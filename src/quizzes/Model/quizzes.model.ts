@@ -12,7 +12,7 @@ export class quizzes{
     module_id: String;
     
     @Prop()
-    questions: Object[];
+    questions: string[];
 
     @Prop()
     created_at: Date;

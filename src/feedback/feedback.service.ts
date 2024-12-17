@@ -9,7 +9,7 @@ import { quizzes } from '../quizzes/Model/quizzes.model';
 @Injectable()
 export class FeedbackService {
   constructor(
-    @InjectModel(quizzes.name) private readonly quizModel: Model<typeof quizzes>,
+    @InjectModel(quizzes.name) private readonly quizModel: Model<quizzes>,
   ) {}
 
   /**
@@ -21,9 +21,11 @@ export class FeedbackService {
     if (!quiz) {
       throw new NotFoundException('Quiz not found');
     }
+    console.log("Module: ",quiz.module_id)
+console.log("questions: ",quiz.questions)
 
-    const quizObject = quiz.toObject(); // Converts Mongoose document to JS object
-    const results = quizObject.questions.map((question: any, index: number) => {
+   // const quizObject = quiz.toObject(); // Converts Mongoose document to JS object
+    const results = quiz.questions.map((question: any, index: number) => {
         return {
             index: index + 1,
             questionText: question.text,
@@ -33,7 +35,6 @@ export class FeedbackService {
     
     return {
       totalQuestions: quiz.questions.length,
-      correctAnswers: results.filter((res) => res.isCorrect).length,
       feedback: results,
     };
   }

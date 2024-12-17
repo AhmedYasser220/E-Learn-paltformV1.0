@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Progress } from '../Progress/Model/progress.model';
+import { progress } from '../Progress/Model/progress.model';
 import { course } from '../course/Model/course.nodel';
 import { modules } from '../modules/Model/modules.model';
 import { quizzes } from '../quizzes/Model/quizzes.model';
@@ -10,7 +10,7 @@ import { quizzes } from '../quizzes/Model/quizzes.model';
 @Injectable()
 export class DashboardService {
   constructor(
-    @InjectModel(Progress.name) private progressModel: Model<Progress>,
+    @InjectModel(progress.name) private progressModel: Model<progress>,
     @InjectModel(course.name) private courseModel: Model<course>,
     @InjectModel(modules.name) private modulesModel: Model<modules>,
     @InjectModel(quizzes.name) private quizzesModel: Model<quizzes>,

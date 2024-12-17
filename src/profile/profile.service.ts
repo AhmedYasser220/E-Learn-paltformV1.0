@@ -2,7 +2,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { Progress, ProgressDocument } from '../Progress/Model/progress.model';
+import { progress, progressDocument } from '../Progress/Model/progress.model';
 
 @Injectable()
 export class ProfileService {
@@ -10,7 +10,7 @@ export class ProfileService {
   //   @InjectModel(Progress.name) private readonly progressModel: Model<typeof Progress>,
   // ) {}
   constructor(
-    @InjectModel(Progress.name) private progressModel: Model<ProgressDocument>,
+    @InjectModel(progress.name) private progressModel: Model<progressDocument>,
   ) {}
 
   /**
@@ -27,18 +27,8 @@ export class ProfileService {
     }
 
     // Calculate total completion percentage
-    const totalCompletion = progressRecords.reduce(
-      (acc, record) => acc + record.completion_percentage,
-      0,
-    );
-
+    
     // Calculate average score
-    const averageScore = totalCompletion / progressRecords.length;
-
-    return {
-      userId,
-      totalCourses: progressRecords.length,
-      averageScore: averageScore.toFixed(2),
-    };
+   
   }
-  }
+}
