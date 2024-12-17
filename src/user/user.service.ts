@@ -45,4 +45,20 @@ export class UserService {
   async delete(id: string): Promise<UserDocument> {
     return await this.UserModel.findByIdAndDelete(id); // Find and delete the student
   }
+
+
+  async searchStudents(filters: any): Promise<user[]> {
+    const query = { role: 'student' }; // Only fetch users with role 'student'
+    if (filters.name) query['name'] = { $regex: filters.name, $options: 'i' };
+
+    return this.UserModel.find(query).exec();
+  }
+
+  async searchInstructors(filters: any): Promise<user[]> {
+    const query = { role: 'instructor' }; // Only fetch users with role 'instructor'
+    if (filters.name) query['name'] = { $regex: filters.name, $options: 'i' };
+
+    return this.UserModel.find(query).exec();
+
+  }
 }

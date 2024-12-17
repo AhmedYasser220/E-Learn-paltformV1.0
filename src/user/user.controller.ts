@@ -8,6 +8,7 @@ import {
   Put,
   Req,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { user } from './models/user.schema';
@@ -15,19 +16,19 @@ import { createUserDTo } from './Dtos/createUser.dto';
 import { updateUserDTo } from './Dtos/updateUser.dto';
 
 // @UseGuards(AuthGuard) //class level
-@Controller('students') // it means anything starts with /student
+@Controller('user') // it means anything starts with /student
 export class UserController {
-  constructor(private studentService: UserService) {}
+  constructor(private userService: UserService) {}
   //@Public()
   @Get()
   // Get all students
-  async getAllStudents(): Promise<user[]> {
-    return await this.studentService.findAll();
+  async getAllUser(): Promise<user[]> {
+    return await this.userService.findAll();
   }
   //@UseGuards(AuthGuard) // handler level
   @Get('currentUser')
   async getCurrentUser(@Req() { user }): Promise<user> {
-    const student = await this.studentService.findById(user.userid);
+    const student = await this.userService.findById(user.userid);
     console.log(student);
     return student;
   }
@@ -36,31 +37,38 @@ export class UserController {
   //@UseGuards(authorizationGaurd)
   @Get(':id') // /student/:id
   // Get a single student by ID
-  async getStudentById(@Param('id') id: string): Promise<user> {
+  async getUserById(@Param('id') id: string): Promise<user> {
     // Get the student ID from the route parameters
-    const student = await this.studentService.findById(id);
+    const student = await this.userService.findById(id);
     return student;
   }
   // Create a new student
   @Post()
-  async createStudent(@Body() usertData: createUserDTo) {
+  async createUser(@Body() usertData: createUserDTo) {
     // Get the new student data from the request body
-    const newStudent = await this.studentService.create(usertData);
+    const newStudent = await this.userService.create(usertData);
     return newStudent;
   }
   // Update a student's details
   @Put(':id')
-  async updateStudent(
-    @Param('id') id: string,
-    @Body() studentData: updateUserDTo,
-  ) {
-    const updatedStudent = await this.studentService.update(id, studentData);
-    return updatedStudent;
+  async updateUser(@Param('id') id: string, @Body() userData: updateUserDTo) {
+    const updatedUser = await this.userService.update(id, userData);
+    return updatedUser;
   }
   // Delete a student by ID
   @Delete(':id')
-  async deleteStudent(@Param('id') id: string) {
-    const deletedStudent = await this.studentService.delete(id);
+  async deleteUser(@Param('id') id: string) {
+    const deletedStudent = await this.userService.delete(id);
     return deletedStudent;
+  }
+
+  @Get('students/search')
+  async searchStudents(@Query() filters: any) {
+    return this.userService.searchStudents(filters);
+  }
+
+  @Get('instructors/search')
+  async searchInstructors(@Query() filters: any) {
+    return this.userService.searchInstructors(filters);
   }
 }
