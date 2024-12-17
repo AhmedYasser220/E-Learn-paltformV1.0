@@ -4,7 +4,7 @@ import { BackupService } from './backup.service';
 import { BackupController } from './backup.controller';
 import { Backup, BackupSchema } from './models/backup.model';
 import { User, UserSchema } from '../user/models/user.model';
-import { UserModule } from '../user/user.module';  // Import UserModule
+import { UserModule } from '../user/user.module';  
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { UserModule } from '../user/user.module';  // Import UserModule
       { name: Backup.name, schema: BackupSchema },
       { name: User.name, schema: UserSchema },
     ]),
-    forwardRef(() => UserModule),  // Use forwardRef() to resolve circular dependency
+    forwardRef(() => UserModule), 
   ],
   providers: [BackupService],
   controllers: [BackupController],
