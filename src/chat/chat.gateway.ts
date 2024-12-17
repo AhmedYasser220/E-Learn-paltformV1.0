@@ -15,6 +15,9 @@ import {
     },
   })
   export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+    cors: {
+      origin: '*', // Allow requests from any origin; adjust as per your setup
+    }
     @WebSocketServer()
     server: Server;
   
