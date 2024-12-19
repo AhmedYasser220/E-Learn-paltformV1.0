@@ -6,7 +6,7 @@ export class ProgressController {
   constructor(private readonly progressService: ProgressService) {}
 
   // Fetch all progress records for a specific user ID
-  @Get('user/:userId')
+  @Get('users/:userId')
   async getProgressByUserId(@Param('userId') userId: string) {
     return await this.progressService.getProgressByUserId(userId);
   }
