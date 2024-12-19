@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { progress, progressDocument } from '../Progress/Model/progress.model'
+import { progress, progressDocument } from '../progress/Model/progress.model';
 
 @Injectable()
 export class ProgressService {
@@ -9,62 +9,56 @@ export class ProgressService {
     @InjectModel(progress.name) private readonly progressModel: Model<progressDocument>,
   ) {}
 
-  // Calculate completion rate for a specific user
-  async getCompletionRate(userId: string): Promise<number> {
-    const totalCourses = await this.progressModel.countDocuments({ user_id: userId }).exec();
+  // Fetch all progress for a specific user ID
+  async getProgressByUserId(userId: string): Promise<progress[]> {
+    const progressData = await this.progressModel
+      .find({ user_id: userId })
+      .populate('course_id', 'name description') // Populate course details
+      .exec();
 
+    if (!progressData.length) {
+      throw new NotFoundException(`No progress found for user ID ${userId}`);
+    }
+
+    return progressData;
+  }
+
+  // Fetch a single progress document by ID
+  async getProgressById(id: string): Promise<progress> {
+    const progressDoc = await this.progressModel
+      .findById(id)
+      .populate('user_id', 'name email') // Populate user details
+      .populate('course_id', 'name') // Populate course details
+      .exec();
+
+    if (!progressDoc) {
+      throw new NotFoundException(`Progress with ID ${id} not found`);
+    }
+
+    return progressDoc;
+  }
+
+  // Get student dashboard metrics
+  async getStudentDashboardMetrics(userId: string): Promise<any> {
     const completedCourses = await this.progressModel
       .countDocuments({ user_id: userId, completion_percentage: { $gte: 100 } })
       .exec();
 
-    if (totalCourses === 0) {
-      return 0; // Avoid division by zero
-    }
-
-    const completionRate = (completedCourses / totalCourses) * 100;
-    return parseFloat(completionRate.toFixed(2)); // Return as a percentage with 2 decimals
-  }
-
-  // Calculate average completion percentage for a user across all courses
-  async getAverageScore(userId: string): Promise<number> {
-    const result = await this.progressModel
+    const averageCompletion = await this.progressModel
       .aggregate([
         { $match: { user_id: userId } },
-        {
-          $group: {
-            _id: '$user_id',
-            averageCompletion: { $avg: '$completion_percentage' },
-          },
-        },
+        { $group: { _id: null, average: { $avg: '$completion_percentage' } } },
       ])
       .exec();
 
-    if (result.length === 0) {
-      return 0; // No progress data
-    }
-
-    return parseFloat(result[0].averageCompletion.toFixed(2));
-  }
-
-  // Calculate total engagement (total courses interacted with by the user)
-  async getEngagementCount(userId: string): Promise<number> {
-    const totalEngagement = await this.progressModel
+    const totalEngagements = await this.progressModel
       .countDocuments({ user_id: userId })
       .exec();
 
-    return totalEngagement;
-  }
-
-  // Student Dashboard Metrics
-  async getStudentDashboardMetrics(userId: string): Promise<any> {
-    const completionRate = await this.getCompletionRate(userId);
-    const averageCompletion = await this.getAverageScore(userId);
-    const engagementCount = await this.getEngagementCount(userId);
-
     return {
-      completionRate: `${completionRate}%`,
-      averageCompletion: `${averageCompletion}%`,
-      totalEngagements: engagementCount,
+      completionRate: completedCourses,
+      averageCompletion: averageCompletion.length ? averageCompletion[0].average : 0,
+      totalEngagements,
     };
   }
 }
