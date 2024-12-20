@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { UserModule } from './user/user.module';
 import { CourseModule } from './course/course.module';
@@ -11,6 +11,8 @@ import { ResponsesModule } from './responses/responses.module';
 import { ProgressModule } from './progress/progress.module';
 import { AuthModule } from './auth/auth.module';
 import { configDotenv } from 'dotenv';
+import { QuickNotesModule } from './quick-notes/quick-notes.module';
+
 @Module({
   imports: [
     UserModule,
@@ -18,6 +20,7 @@ import { configDotenv } from 'dotenv';
     ModulesModule,
     QuizzesModule,
     ResponsesModule,
+    QuickNotesModule,
     ProgressModule,
     AuthModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
