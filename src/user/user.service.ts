@@ -27,25 +27,34 @@ export class UserService {
     return students;
   }
 
-  // Get a student by ID
-  async findById(id: string): Promise<UserDocument> {
-    console.log(id);
-    const student = await this.UserModel.findById(id); // Fetch a student by ID
-    return student;
+  // View personal info (User Profile Management)
+  async viewProfile(id: string): Promise<UserDocument> {
+    // Fetch the user's profile information by ID
+    const userProfile = await this.UserModel.findById(id);
+    if (!userProfile) {
+      throw new Error(`User with ID ${id} not found`); // If no user found, throw an error
+    }
+    return userProfile; // Return the user's profile data
   }
-
-  // Update a student's details by ID
-  async update(id: string, updateData: updateUserDTo): Promise<UserDocument> {
-    return await this.UserModel.findByIdAndUpdate(id, updateData, {
-      new: true,
-    }); // Find and update the student
+  // Update personal info (User Profile Management)
+  async updateProfile(
+    id: string,
+    updateData: updateUserDTo,
+  ): Promise<UserDocument> {
+    // Find the user by ID and update their profile
+    const updatedUser = await this.UserModel.findByIdAndUpdate(id, updateData, {
+      new: true, // Return the updated document
+    });
+    if (!updatedUser) {
+      throw new Error('Unable to update user profile');
+    }
+    return updatedUser;
   }
 
   // Delete a student by ID
   async delete(id: string): Promise<UserDocument> {
     return await this.UserModel.findByIdAndDelete(id); // Find and delete the student
   }
-
 
   async searchStudents(filters: any): Promise<user[]> {
     const query = { role: 'student' }; // Only fetch users with role 'student'
@@ -59,6 +68,5 @@ export class UserService {
     if (filters.name) query['name'] = { $regex: filters.name, $options: 'i' };
 
     return this.UserModel.find(query).exec();
-
   }
 }

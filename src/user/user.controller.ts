@@ -26,21 +26,14 @@ export class UserController {
     return await this.userService.findAll();
   }
   //@UseGuards(AuthGuard) // handler level
-  @Get('currentUser')
-  async getCurrentUser(@Req() { user }): Promise<user> {
-    const student = await this.userService.findById(user.userid);
-    console.log(student);
-    return student;
-  }
-
-  //@Roles(Role.User)
-  //@UseGuards(authorizationGaurd)
-  @Get(':id') // /student/:id
-  // Get a single student by ID
-  async getUserById(@Param('id') id: string): Promise<user> {
-    // Get the student ID from the route parameters
-    const student = await this.userService.findById(id);
-    return student;
+  @Get('profile')
+  // View the current user's profile (personal info)
+  async viewProfile(@Req() { user }): Promise<user> {
+    const student = await this.userService.viewProfile(user.userid);
+    if (!student) {
+      throw new Error(`User with ID ${user.userid} not found`);
+    }
+    return student; // Return user's profile info
   }
   // Create a new student
   @Post()
@@ -50,10 +43,17 @@ export class UserController {
     return newStudent;
   }
   // Update a student's details
-  @Put(':id')
-  async updateUser(@Param('id') id: string, @Body() userData: updateUserDTo) {
-    const updatedUser = await this.userService.update(id, userData);
-    return updatedUser;
+  @Put('profile')
+  // Update the current user's profile (personal info)
+  async updateProfile(@Req() { user }, @Body() updateData: updateUserDTo) {
+    const updatedStudent = await this.userService.updateProfile(
+      user.userid,
+      updateData,
+    );
+    if (!updatedStudent) {
+      throw new Error('Unable to update profile');
+    }
+    return updatedStudent; // Return the updated profile
   }
   // Delete a student by ID
   @Delete(':id')
@@ -71,4 +71,7 @@ export class UserController {
   async searchInstructors(@Query() filters: any) {
     return this.userService.searchInstructors(filters);
   }
+  // View personal info (User Profile Management)
+
+  // Update personal info (User Profile Management)
 }
