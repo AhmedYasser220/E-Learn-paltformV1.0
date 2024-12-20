@@ -1,7 +1,9 @@
+// pages/courses/index.tsx
+
 "use client";
 
+
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import axios from 'axios';
 
 const CoursesPage = () => {
@@ -34,13 +36,6 @@ const CoursesPage = () => {
             <li key={course._id} className="p-4 border rounded">
               <h2 className="font-bold">{course.title}</h2>
               <p>{course.description}</p>
-              <Link href={`/courses/${course._id}/edit`} className="text-blue-500">
-                Edit Course
-              </Link>
-              <br />
-              <Link href={`/courses/${course._id}/versions`} className="text-blue-500">
-                View Versions
-              </Link>
             </li>
           ))}
         </ul>
@@ -50,3 +45,6 @@ const CoursesPage = () => {
 };
 
 export default CoursesPage;
+
+
+
