@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
+import Layout from "../components/layout";
 
-const ModulesPage = () => {
+const ModulesPage : React.FC = () => {
   // States for CheckModuleAccess
   const { module_id } = useParams();
   const [performance, setPerformance] = useState<number | undefined>();
@@ -91,6 +92,7 @@ const ModulesPage = () => {
   };
 
   return (
+    <Layout>
     <div className="container mx-auto p-4 space-y-8">
       {/* Check Module Access Section */}
       <section>
@@ -223,6 +225,7 @@ const ModulesPage = () => {
         </div>
       </section>
     </div>
+    </Layout>
   );
 };
 

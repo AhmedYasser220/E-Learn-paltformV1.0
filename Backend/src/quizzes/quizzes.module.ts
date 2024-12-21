@@ -8,7 +8,7 @@ import { ModulesModule } from '../modules/modules.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'quizzes', schema: QuizzesSchema }]), 
-    ModulesModule,
+    ModulesModule
   ],
   providers: [QuizzesService],
   controllers: [QuizzesController]

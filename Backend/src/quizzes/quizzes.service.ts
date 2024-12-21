@@ -1,16 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 //decoder to inject the model 
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { quizzes } from './Model/quizzes.model';
+import { user } from 'src/user/Models/user.schema';
 import { ModuleDocument, Module } from '../modules/Model/modules.model';
-
 @Injectable()
 export class QuizzesService {
 
   constructor(
     @InjectModel(quizzes.name) private quizModel: Model<quizzes>,
     @InjectModel('module') private readonly moduleModel: Model<Module>, // Injecting the module model
+    @InjectModel(user.name) private readonly userModel: Model<user>,
   ) {}
 
    // create quiz 
@@ -77,5 +78,25 @@ export class QuizzesService {
   async getQuizById(quiz_id: string): Promise<quizzes | null> {
     return this.quizModel.findOne({ quiz_id }).exec();
   }
-  
+
+  // Method to fetch quizzes by student email
+  async getQuizzesByStudentEmail(email: string) {
+    // Fetch the student using the email
+    const student = await this.userModel.findOne({ email }).exec();
+
+    if (!student) {
+      throw new NotFoundException(`Student with email ${email} not found`);
+    }
+
+    // // Fetch quizzes based on the student's enrolled modules
+    // const moduleIds = student.enrolledModules;
+    // if (moduleIds.length === 0) {
+    //   throw new NotFoundException('Student is not enrolled in any modules');
+    // }
+
+    // const quizzes = await this.quizModel.find({ module_id: { $in: moduleIds } }).exec();
+    // return quizzes;
+  }
+
+
 }

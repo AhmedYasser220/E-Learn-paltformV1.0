@@ -56,6 +56,9 @@ export class Course {
 
   @Prop({ type: [CourseVersion], default: [] })
   versions: CourseVersion[]; // Embedded array of versions
+
+  @Prop({ type: [String], required: false })
+  multimedia_resources?: string[];
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);

@@ -22,6 +22,10 @@ export class user {
 
   @Prop({ default: () => new Date() })
   created_at: Date;
+
+  // @Prop({ type: [String], default: [] }) 
+  // enrolledModules: string[];
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(user);

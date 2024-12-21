@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Param, Body } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, NotFoundException } from '@nestjs/common';
 import { QuizzesService } from './quizzes.service';
 import { CreateQuizDto } from './dto/createQuiz.dto';
 import { Roles , Role} from '../auth//decorators/roles.decorator'; 
@@ -35,5 +35,15 @@ export class QuizzesController {
   }
   return quiz;
 }
-
+ // Get quizzes based on student's enrolled modules
+ @Get('by-email/:email')
+ async getQuizzesByStudentEmail(@Param('email') email: string) {
+   try {
+     const quizzes = await this.quizService.getQuizzesByStudentEmail(email);
+     return quizzes;
+   } catch (error) {
+     throw new Error('Error fetching quizzes: ' + error.message);
+   }
+ }
 }
+

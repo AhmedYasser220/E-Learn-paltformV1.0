@@ -59,6 +59,9 @@ export class Module {
   // Use the Question schema as the type for questionBank
   @Prop({ type: [QuestionSchema], default: [] })
   questionBank: Question[];
+
+  @Prop({ type: [String], default: [] })
+  quizzes: string[]; // List of quiz IDs related to the module
 }
 
 // Create the Module schema

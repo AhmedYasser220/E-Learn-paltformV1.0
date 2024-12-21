@@ -6,3 +6,4 @@ export class RegisterRequestDto {
   profile_picture_url: string;
   created_at: Date;
 }
+

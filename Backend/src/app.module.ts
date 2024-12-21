@@ -21,9 +21,12 @@ import { configDotenv } from 'dotenv';
     ProgressModule,
     AuthModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    MongooseModule.forRoot(
-      'mongodb+srv://Wightnight120:Qazxsw!!@e-learndb.ksmzg.mongodb.net/',
-    ),
+   // MongooseModule.forRoot(process.env.MONGO_URI),
+     MongooseModule.forRoot('mongodb://localhost/e-learning')
+
+     // 'mongodb+srv://Wightnight120:Qazxsw!!@e-learndb.ksmzg.mongodb.net/',
+    //MongooseModule.forRoot('mongodb+srv://Wightnight120:Qazxsw!!@e-learndb.ksmzg.mongodb.net/'),
+    
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { createQuiz } from '../api/quizzes';
+import { createQuiz } from '../api/quizzes/route';
 
 const CreateQuiz = () => {
   const [moduleId, setModuleId] = useState('');

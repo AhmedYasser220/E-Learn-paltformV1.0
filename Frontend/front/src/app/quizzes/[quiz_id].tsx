@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation"; // Correct hook for App Router
 import { useEffect, useState } from "react";
-import { getQuizById } from "../api/quizzes";
+import { getQuizById } from "../api/quizzes/route";
 
 const QuizDetail = () => {
   const { quiz_id } = useParams(); // Fetch the dynamic route parameter
