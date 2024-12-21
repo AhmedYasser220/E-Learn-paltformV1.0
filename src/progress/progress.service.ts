@@ -1,23 +1,33 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { progress, progressDocument } from '../progress/Model/progress.model';
+import { user } from '../user/Models/user.schema';
 
 @Injectable()
 export class ProgressService {
   constructor(
-    @InjectModel(progress.name) private readonly progressModel: Model<progressDocument>,
+    @InjectModel(user.name) private UserModel: Model<user>,
+    @InjectModel('progress') private readonly progressModel: Model<progress>,
   ) {}
 
-  // Fetch all progress for a specific user ID
-  async getProgressByUserId(userId: string): Promise<progress[]> {
-    const progressData = await this.progressModel
-      .find({ user_id: userId })
-      .populate('course_id', 'name description') // Populate course details
-      .exec();
+  // Get all progress documents
+  async getAll() {
+    return this.progressModel.find();
+  }
 
-    if (!progressData.length) {
-      throw new NotFoundException(`No progress found for user ID ${userId}`);
+  // Fetch progress by user ID
+  async getProgressByUserId(_id: string): Promise<progressDocument> {
+    console.log(_id);
+    if (!Types.ObjectId.isValid(_id)) {
+      throw new NotFoundException(`Invalid ID format: ${_id}`);
+    }
+
+    const progressData = await this.progressModel.findById(_id);
+    console.log('progressData:', progressData);
+
+    if (!progressData) {
+      throw new NotFoundException(`No progress found for user ID ${_id}`);
     }
 
     return progressData;
@@ -27,8 +37,8 @@ export class ProgressService {
   async getProgressById(id: string): Promise<progress> {
     const progressDoc = await this.progressModel
       .findById(id)
-      .populate('user_id', 'name email') // Populate user details
-      .populate('course_id', 'name') // Populate course details
+      .populate('userId', 'name email') // Populate user details
+      .populate('courseId', 'name') // Populate course details
       .exec();
 
     if (!progressDoc) {
@@ -41,18 +51,18 @@ export class ProgressService {
   // Get student dashboard metrics
   async getStudentDashboardMetrics(userId: string): Promise<any> {
     const completedCourses = await this.progressModel
-      .countDocuments({ user_id: userId, completion_percentage: { $gte: 100 } })
+      .countDocuments({ userId, completion_percentage: { $gte: 100 } })
       .exec();
 
     const averageCompletion = await this.progressModel
       .aggregate([
-        { $match: { user_id: userId } },
+        { $match: { userId } },
         { $group: { _id: null, average: { $avg: '$completion_percentage' } } },
       ])
       .exec();
 
     const totalEngagements = await this.progressModel
-      .countDocuments({ user_id: userId })
+      .countDocuments({ userId })
       .exec();
 
     return {

@@ -11,14 +11,14 @@ import { ResponsesModule } from './responses/responses.module';
 import { ProgressModule } from './progress/progress.module';
 import { AuthModule } from './auth/auth.module';
 import { configDotenv } from 'dotenv';
-import { DashboardModule } from './dashboard/dashboard.module';
+//import { DashboardModule } from './dashboard/dashboard.module';
 import { FeedbackModule } from './feedback/feedback.module';
 @Module({
   imports: [
     FeedbackModule,
     UserModule,
     ProgressModule,
-    DashboardModule,
+    //DashboardModule,
     AuthModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     MongooseModule.forRoot(

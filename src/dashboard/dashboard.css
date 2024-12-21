@@ -1,0 +1,25 @@
+.dashboard {
+    text-align: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .metric {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  h1 {
+    color: #4CAF50;
+  }
+  
+  h2 {
+    color: #333;
+  }
+  
+  p {
+    font-size: 1.2em;
+  }
+  
