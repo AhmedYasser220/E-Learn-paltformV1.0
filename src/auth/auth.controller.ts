@@ -6,11 +6,12 @@ import {
   HttpException,
   Res,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterRequestDto } from './dto/RegisterRequestDto';
 import { SignInDto } from './dto/SignInDto';
-
+import { AuthGuard } from './guards/authentication.guard';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}

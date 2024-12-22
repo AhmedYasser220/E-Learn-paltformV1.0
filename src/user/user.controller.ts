@@ -14,18 +14,25 @@ import { UserService } from './user.service';
 import { user } from './models/user.schema';
 import { createUserDTo } from './Dtos/createUser.dto';
 import { updateUserDTo } from './Dtos/updateUser.dto';
-
+import { authorizationGuard } from 'src/auth/guards/authorization.guard';
+import { Role, Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthGuard } from 'src/auth/guards/authentication.guard';
+import { Public } from 'src/auth/decorators/public.document';
 // @UseGuards(AuthGuard) //class level
 @Controller('user') // it means anything starts with /student
+@UseGuards(AuthGuard, authorizationGuard)
 export class UserController {
   constructor(private userService: UserService) {}
   //@Public()
+  @Roles(Role.Admin)
   @Get()
   // Get all students
   async getAllUser(): Promise<user[]> {
     return await this.userService.findAll();
   }
   //@UseGuards(AuthGuard) // handler level
+
+  @Roles(Role.Admin, Role.Student, Role.Instructor)
   @Get('profile')
   // View the current user's profile (personal info)
   async viewProfile(@Req() { user }): Promise<user> {
@@ -42,7 +49,7 @@ export class UserController {
     const newStudent = await this.userService.create(usertData);
     return newStudent;
   }
-  // Update a student's details
+  @Roles(Role.Admin, Role.Student, Role.Instructor)
   @Put('profile')
   // Update the current user's profile (personal info)
   async updateProfile(@Req() { user }, @Body() updateData: updateUserDTo) {
@@ -56,6 +63,7 @@ export class UserController {
     return updatedStudent; // Return the updated profile
   }
   // Delete a student by ID
+  @Roles(Role.Admin, Role.Student, Role.Instructor)
   @Delete(':id')
   async deleteUser(@Param('id') id: string) {
     const deletedStudent = await this.userService.delete(id);

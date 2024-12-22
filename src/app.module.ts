@@ -24,9 +24,7 @@ import { QuickNotesModule } from './quick-notes/quick-notes.module';
     ProgressModule,
     AuthModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    MongooseModule.forRoot(
-      'mongodb+srv://Wightnight120:Qazxsw!!@e-learndb.ksmzg.mongodb.net/',
-    ),
+    MongooseModule.forRoot('mongodb://localhost:27017'),
   ],
   controllers: [AppController],
   providers: [AppService],
