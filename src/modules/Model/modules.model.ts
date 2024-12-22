@@ -1,24 +1,38 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import Mongoose, { HydratedDocument } from 'mongoose';
+import { IsDate, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { HydratedDocument } from 'mongoose';
 
 @Schema()
 export class modules {
-  @Prop()
-  module_id: String;
+  @IsNotEmpty()
+  @IsString()
+  @Prop({ required: true })
+  module_id: string;
 
-  @Prop()
-  course_id: String;
+  @IsNotEmpty()
+  @IsString()
+  @Prop({ required: true })
+  course_id: string;
 
-  @Prop()
-  title: String;
+  @IsNotEmpty()
+  @IsString()
+  @Prop({ required: true })
+  title: string;
 
-  @Prop()
-  content: String;
+  @IsNotEmpty()
+  @IsString()
+  @Prop({ required: true })
+  content: string;
 
-  @Prop()
-  resources: string[];
+  @IsOptional()
+  @Prop({ type: [String], required: false })
+  resources?: string[];
 
-  @Prop()
-  created_at: Date;
+  @IsOptional()
+  @IsDate()
+  @Prop({ required: false })
+  created_at?: Date;
 }
-export const modulesSchema = SchemaFactory.createForClass(modules);
+
+export const ModulesSchema = SchemaFactory.createForClass(modules);
+export type ModulesDocument = HydratedDocument<modules>;

@@ -1,4 +1,13 @@
-import { IsString, IsNumber, IsDate, IsBoolean } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsDate,
+  IsBoolean,
+  IsOptional,
+  Min,
+  Max,
+  IsArray,
+} from 'class-validator';
 
 export class CreateProgressDto {
   @IsString()
@@ -10,12 +19,27 @@ export class CreateProgressDto {
   @IsNumber()
   completion_percentage: number;
 
+  @IsOptional()
   @IsDate()
-  completedAt: Date;
+  completedAt?: Date;
 
+  @IsOptional()
   @IsBoolean()
-  courseCompleted: boolean;
+  courseCompleted?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  moduleRatings?: { [moduleId: string]: number };
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  @Max(5)
+  courseRating?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  @Max(5)
+  instructorRating?: number;
 }
-
-
-

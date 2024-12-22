@@ -6,5 +6,6 @@ export class CreateCourseDto {
   difficulty_level: string;
   created_by: string;
   created_at?: Date;
-  multimedia_resources?: string[]; 
+  multimedia_resources?: { filePath: string; isOutdated?: boolean }[];
+  is_available: boolean;
 }

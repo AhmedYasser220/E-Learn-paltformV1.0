@@ -11,6 +11,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -47,10 +48,10 @@ export class CourseController {
     }
   }
 
-  @Get(':id')
-  async getCourseById(@Param('id') id: string): Promise<course> {
+  @Get(':course_Id')
+  async getCourseById(@Param('course_Id') course_Id: string): Promise<course> {
     try {
-      const course = await this.courseService.findById(id);
+      const course = await this.courseService.findById(course_Id);
       if (!course) {
         throw new HttpException(
           'thid course can not be found',
@@ -63,13 +64,16 @@ export class CourseController {
     }
   }
 
-  @Put(':id')
+  @Put(':course_Id')
   async updateCourse(
-    @Param('id') id: string,
+    @Param('course_Id') course_Id: string,
     @Body() courseData: UpdateCourseDto,
   ): Promise<course> {
     try {
-      const updatedCourse = await this.courseService.update(id, courseData);
+      const updatedCourse = await this.courseService.update(
+        course_Id,
+        courseData,
+      );
       if (!updatedCourse) {
         throw new HttpException('course not found', HttpStatus.NOT_FOUND);
       }
@@ -79,12 +83,12 @@ export class CourseController {
     }
   }
 
-  
-
-  @Delete(':id')
-  async deleteCourse(@Param('id') id: string): Promise<{ message: string }> {
+  @Delete(':course_Id')
+  async deleteCourse(
+    @Param('course_Id') course_Id: string,
+  ): Promise<{ message: string }> {
     try {
-      const deletedCourse = await this.courseService.delete(id);
+      const deletedCourse = await this.courseService.delete(course_Id);
       if (!deletedCourse) {
         throw new HttpException('course not found', HttpStatus.NOT_FOUND);
       }
@@ -94,19 +98,51 @@ export class CourseController {
     }
   }
 
-@Post(':id/upload')
-@UseInterceptors(FileInterceptor('file'))
-async uploadFile(@Param('id') id:string ,@UploadedFile() file:Express.Multer.File ,@Body() body: any){
-  console.log('Received file:', file);
-  console.log('Request Body:', body);
-  if(!file){
-    throw new BadRequestException('No file uploaded');
-  
+  @Post(':id/upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: any,
+  ) {
+    console.log('Received file:', file);
+    console.log('Request Body:', body);
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+    const filePath = `uploads/${file.filename}`;
+    await this.courseService.addMultimediaResource(id, filePath);
+    return { message: 'file uploaded succsesfully ', filePath };
   }
-  const filePath = `uploads/${file.filename}`;
-  await this.courseService.addMultimediaResource(id,filePath);
-  return {message:'file uploaded succsesfully ',filePath};
+
+ // Flag a resource as outdated
+ @Put(':courseId/resources/outdated')
+ //@UseGuards(AuthGuard, RolesGuard)
+ //@Roles(Role.Instructor)
+ async flagResourceAsOutdated(
+   @Param('courseId') courseId: string,
+   @Body('resourcePath') resourcePath: string,
+ ): Promise<void> {
+   try {
+     await this.courseService.flagResourceAsOutdated(courseId, resourcePath);
+   } catch (error) {
+     throw new BadRequestException(error.message);
+   }
+ }
+
+ // Get multimedia resources for a course based on user role
+ @Get(':courseId/resources')
+ //@UseGuards(AuthGuard)
+ async getMultimediaResources(
+   @Param('courseId') courseId: string,
+   @Query('role') userRole: string, // Role can be 'student' or 'instructor'
+ ): Promise<{ filePath: string; isOutdated: boolean }[]> {
+   if (!['student', 'instructor'].includes(userRole)) {
+     throw new BadRequestException('Invalid role provided');
+   }
+   return await this.courseService.getMultimediaResources(courseId, userRole);
+ }
 }
 
-}
+
 

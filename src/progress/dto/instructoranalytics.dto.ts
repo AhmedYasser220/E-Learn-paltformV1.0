@@ -4,6 +4,9 @@ export class InstructorAnalyticsDto {
   instructorEmail: string;
   totalCourses: number;
   totalStudents: number;
-  averageCompletionRate: number;  // Student Engagement
-  averageAssessmentScore: number; // Content Effectiveness (assessing quiz results)
+  averageCompletionRate: number;
+  averageAssessmentScore: number;
+  moduleRatings: any;
+  averageCourseRating: number;
+  instructorRating: number;
 }

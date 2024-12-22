@@ -42,8 +42,22 @@ export class course {
 
 
   @IsOptional()
-  @Prop({ type: [String], required: false })
-  multimedia_resources?: string[];
+  @Prop({
+    type: [
+      {
+        filePath: { type: String, required: true },
+        isOutdated: { type: Boolean, default: false },
+      },
+    ],
+    required: false,
+  })
+  multimedia_resources?: { filePath: string; isOutdated: boolean }[];
+
+
+  @IsNotEmpty()
+  @Prop({ required: true, default: true })
+  is_available: boolean;
+
 }
 
 

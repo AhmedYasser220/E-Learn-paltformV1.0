@@ -59,48 +59,101 @@ export class CourseService {
   }
 
 async delete (id:string):Promise<course>{
-  try{
-    const deletedCourse = this.courseModel.findByIdAndDelete(id);
-    if(!deletedCourse){
-      throw new NotFoundException('course is not found');
+  try {
+    const course = await this.courseModel.findById(id);
+    if (!course) {
+      throw new NotFoundException('Course not found');
     }
-     
-    return deletedCourse;
+    course.is_available = false; // Mark the course as unavailable
+    await course.save();
+    return course;
+  } catch (error) {
+    throw new Error('Error in marking the course as unavailable');
   }
-
-catch(error){
-throw new Error('error in deleting the course')
 }
 
-}
+
 
 handleFileUpload(file: Express.Multer.File) {
   if (!file) {
     throw new BadRequestException('No file uploaded');
   }
-
   // Validate file type
   const allowedMimeTypes = ['image/jpeg', 'image/png', 'application/pdf'];
   if (!allowedMimeTypes.includes(file.mimetype)) {
     throw new BadRequestException('Invalid file type');
   }
-
   // Validate file size (e.g., max 5 MB)
   const maxSize = 5 * 1024 * 1024;
   if (file.size > maxSize) {
     throw new BadRequestException('File is too large!');
   }
-
   return { filePath: file.path };
 }
-
 async addMultimediaResource(courseId: string, filePath: string): Promise<void> {
   const course = await this.courseModel.findById(courseId);
   if (!course) {
     throw new NotFoundException('Course not found');
   }
 course.multimedia_resources = course.multimedia_resources || [];
-course.multimedia_resources.push(filePath);
+course.multimedia_resources.push({
+  filePath,
+  isOutdated: false
+});
 await course.save();
 }
+
+async flagResourceAsOutdated(
+  courseId: string,
+  resourcePath: string,
+): Promise<void> {
+  const course = await this.courseModel.findById(courseId);
+  if (!course) {
+    throw new NotFoundException('Course not found');
+  }
+
+  const resource = course.multimedia_resources?.find(
+    (res) => res.filePath === resourcePath,
+  );
+  if (!resource) {
+    throw new NotFoundException('Resource not found');
+  }
+
+  if (resource.isOutdated) {
+    throw new BadRequestException('Resource is already flagged as outdated');
+  }
+
+  
+  resource.isOutdated = true;
+
+
+  await course.save();
 }
+
+// Get multimedia resources based on user role
+async getMultimediaResources(
+  courseId: string,
+  userRole: string, 
+): Promise<{ filePath: string; isOutdated: boolean }[]> {
+  // Find the course by its ID
+  const course = await this.courseModel.findById(courseId);
+  if (!course) {
+    throw new NotFoundException('Course not found');
+  }
+
+  if (userRole === 'instructor') {
+    return course.multimedia_resources || [];
+  }
+
+  return (course.multimedia_resources || []).filter(
+    (res) => !res.isOutdated,
+  );
+}
+
+
+
+
+
+}
+
+
