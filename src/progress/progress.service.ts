@@ -102,6 +102,13 @@ export class ProgressService {
   ): Promise<progress | null> {
     return this.progressModel.findOne({ userId, courseId }).exec();
   }
+ // progress.service.ts
+async getCompletedCourses(userId: string): Promise<progress[]> {
+  return this.progressModel.find({
+    userId,
+    courseCompleted: true, // Filter for completed courses
+  }).exec();
+}
 
 
   //-----------------------------------------------------------------------------------------
