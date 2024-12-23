@@ -11,7 +11,7 @@ export class CourseService {
   constructor(@InjectModel(Course.name) private courseModel: Model<CourseDocument>) {}
 
 
-/// hannah 
+
 async create(courseData: CreateCourseDto): Promise<Course> {
   try {
     const newCourse = new this.courseModel(courseData);
@@ -89,7 +89,7 @@ course.multimedia_resources.push(filePath);
 await course.save();
 }
 
-//////////////////Hannah 
+
 
   // Update Course 
   async updateCourse(course_Id: string, updateData:UpdateCourseDto): Promise<Course> {

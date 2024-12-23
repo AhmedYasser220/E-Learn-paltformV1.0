@@ -15,7 +15,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { CourseService } from './course.service';
+import { CourseService } from '';
 import { course } from './Model/course.model';
 import { CreateCourseDto } from './dto/createCourse.dto';
 import { UpdateCourseDto } from './dto/updateCourse.dto';
