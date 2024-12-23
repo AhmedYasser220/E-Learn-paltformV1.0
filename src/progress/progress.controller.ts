@@ -6,6 +6,7 @@ import { Progress } from './Model/progress.model';
 
 @Controller('progress')
 export class ProgressController {
+  progressModel: any;
   constructor(private readonly progressService: ProgressService) {}
 
   // Track or update progress of a course for a user
@@ -27,5 +28,14 @@ export class ProgressController {
     @Param('courseId') courseId: string,
   ): Promise<Progress | null> {
     return this.progressService.getCourseProgress(userId, courseId);
+  }
+  @Get('student-dashboard/:userId')
+  async getStudentDashboardMetrics(@Param('userId') userId: string) {
+    return await this.progressService.getStudentDashboardMetrics(userId);
+  }
+  // track coplete curse
+  @Get('completed/:userId')
+  async getCompletedCourses(@Param('userId') userId: string): Promise<Progress[]> {
+    return this.progressService.getCompletedCourses(userId);
   }
 }

@@ -9,12 +9,14 @@ import { QuizzesModule } from './quizzes/quizzes.module';
 import { ResponsesModule } from './responses/responses.module';
 import { ProgressModule } from './progress/progress.module';
 import { ChatModule } from './chat/chat.module';
-import { ForumModule } from './forum/forum.module';
-import { MessageModule } from './message/message.module';
+import { Forum } from './forum/forum.schema';
+import { ForumModule } from './forum/forum.moddule';
+
+
 
 
 @Module({
-  imports: [UserModule,CourseModule,ModulesModule,QuizzesModule,ResponsesModule,ProgressModule,ChatModule,ForumModule,MessageModule,MongooseModule.forRoot('mongodb+srv://Wightnight120:Qazxsw!!@e-learndb.ksmzg.mongodb.net/')],
+  imports: [UserModule,ModulesModule,QuizzesModule,ResponsesModule,ProgressModule,CourseModule,ForumModule,ChatModule,MongooseModule.forRoot('mongodb+srv://Wightnight120:Qazxsw!!@e-learndb.ksmzg.mongodb.net/')],
   controllers: [AppController],
   providers: [AppService],
 })

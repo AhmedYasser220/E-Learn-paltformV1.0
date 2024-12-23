@@ -36,4 +36,29 @@ export class ProgressService {
   async getCourseProgress(userId: string, courseId: string): Promise<Progress | null> {
     return this.progressModel.findOne({ userId, courseId }).exec();
   }
+  async getStudentDashboardMetrics(userId: string): Promise<any> {
+    const completedCourses = await this.progressModel
+      .countDocuments({ userId, progress: { $gte: 100 } })
+      .exec();
+
+    const averageCompletion = await this.progressModel
+      .aggregate([
+        { $match: { userId } },
+        { $group: { _id: null, average: { $avg: '$progress' } } },
+      ])
+      .exec();
+
+    const totalEngagements = await this.progressModel
+      .countDocuments({ userId })
+      .exec();
+
+    return {
+      completionRate: completedCourses,
+      averageCompletion: averageCompletion.length ? averageCompletion[0].average : 0,
+      totalEngagements,
+    };
+  }
+  async getCompletedCourses(userId: string): Promise<Progress[]> {
+    return this.progressModel.find({ userId, completion_percentage: 100 }).exec();
+  }
 }
