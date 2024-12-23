@@ -1,27 +1,19 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { CourseModule } from './course/course.module';
 import { ModulesModule } from './modules/modules.module';
 import { QuizzesModule } from './quizzes/quizzes.module';
 import { ResponsesModule } from './responses/responses.module';
 import { ProgressModule } from './progress/progress.module';
-import { QuickNotesModule } from './quick_notes/quick-notes.module';
+import { BackupModule } from './backup/backup.module';
+
+
 
 @Module({
-  imports: [
-    UserModule,
-    CourseModule,
-    ModulesModule,
-    QuizzesModule,
-    ResponsesModule,
-    ProgressModule,
-   
-    QuickNotesModule, // Include the Quick Notes Module
-    MongooseModule.forRoot('mongodb+srv://Wightnight120:Qazxsw!!@e-learndb.ksmzg.mongodb.net/'), // MongoDB connection
-  ],
+  imports: [UserModule,CourseModule,ModulesModule,QuizzesModule,ResponsesModule,ProgressModule,BackupModule,MongooseModule.forRoot('mongodb+srv://Wightnight120:Qazxsw!!@e-learndb.ksmzg.mongodb.net/')],
   controllers: [AppController],
   providers: [AppService],
 })

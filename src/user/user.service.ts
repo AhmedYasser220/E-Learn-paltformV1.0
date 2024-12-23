@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { user } from './Models/user.model'; 
+import { user } from './Models/user.model'; // Assuming a User schema exists
 
 @Injectable()
 export class UserService {
   constructor(@InjectModel(user.name) private readonly userModel: Model<user>) {}
 
   async searchStudents(filters: any): Promise<user[]> {
-    const query = { role: 'student' }; 
+    const query = { role: 'student' }; // Only fetch users with role 'student'
     if (filters.name) query['name'] = { $regex: filters.name, $options: 'i' };
 
     return this.userModel.find(query).exec();
