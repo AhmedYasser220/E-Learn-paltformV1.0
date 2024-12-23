@@ -11,11 +11,10 @@ export class Backup {
   @Prop({ type: Date })
   backup_date: Date;
 
-  // Set default value for data_type as an empty JSON object
   @Prop({type : String})
   data_type:any
 
-  @Prop({ type: MongooseSchema.Types.Mixed }) // Store arbitrary JSON object for data
+  @Prop({ type: MongooseSchema.Types.Mixed }) 
   data: Record<string, any>;
 }
 

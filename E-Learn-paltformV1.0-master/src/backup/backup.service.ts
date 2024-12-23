@@ -4,21 +4,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Backup } from './models/backup.model';
 import { User } from '../user/Models/user.model';
-import axios from 'axios';
-
-const API_URL = 'mongodb://localhost:27017/e-ler';
-
-export const backupService = {
-  scheduleBackup: async () => {
-    try {
-      const response = await axios.post(`${API_URL}/schedule`);
-      return response.data;
-    } catch (error) {
-      console.error('Backup scheduling failed:', error);
-      throw error;
-    }
-  }
-};
 
 @Injectable()
 export class BackupService {
@@ -31,6 +16,10 @@ export class BackupService {
   async scheduleBackup(): Promise<void> {
     console.log('Scheduling backup...');
     await this.performBackup(); 
+  }
+
+  async getBackups() {
+    return this.backupModel.find().sort({ backup_date: -1 }).exec();
   }
 
   async performBackup() {
@@ -61,8 +50,10 @@ export class BackupService {
       }
       
       console.log(`Backup completed successfully. Total users backed up: ${totalBackedUp}`);
+      return totalBackedUp;
     } catch (error) {
       console.error('Error during backup:', error);
+      throw error;
     }
   }
 }

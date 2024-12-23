@@ -1,0 +1,135 @@
+/* Base Styles */
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif; /* Modern font */
+  background: linear-gradient(135deg, #141E30, #243B55); /* Stylish gradient */
+  color: #f5f5f5; /* Soft white text for good contrast */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: 'Fira Code', monospace;
+  color: #ffcb6b;
+  background-color: #2d2d2d;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+/* Card Component */
+.card {
+  background: linear-gradient(135deg, #ff7eb3, #ff758c);
+  color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(255, 117, 140, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(255, 117, 140, 0.4);
+}
+
+.card h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+.card button {
+  padding: 12px 25px;
+  background: #141E30;
+  color: #fff;
+  border: 2px solid #f5f5f5;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.card button:hover {
+  background: #ff758c;
+  transform: scale(1.05);
+}
+
+/* Container and Layout */
+.container {
+  max-width: 1100px;
+  margin: 50px auto;
+  padding: 0 20px;
+}
+
+.grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Utility Classes */
+.bg-gradient {
+  background: linear-gradient(135deg, #007991, #78ffd6);
+}
+
+.min-h-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-xl {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.text-primary {
+  color: #ff7eb3;
+}
+
+.text-secondary {
+  color: #ff758c;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.mb-8 {
+  margin-bottom: 3rem;
+}
+
+/* Fancy Animations */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.pulse:hover {
+  animation: pulse 1.5s infinite;
+}
+
+/* Footer or Call-to-Action */
+.footer {
+  text-align: center;
+  padding: 20px;
+  background: #243B55;
+  color: #f5f5f5;
+  border-top: 2px solid #ff7eb3;
+}

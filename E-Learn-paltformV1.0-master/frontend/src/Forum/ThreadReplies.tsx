@@ -1,8 +1,8 @@
 // src/components/Forum/ThreadReplies.tsx
 import React, { useState } from 'react';
-import { forumService } from '../../forum.service';
-import Button from '../UI/Button';
-import Modal from '../UI/Modal';
+import Button from '../UI/button';
+import Modal from '../UI/modal';
+import { forumService } from '../services/forum.service';
 
 interface Reply {
   body: string;
@@ -33,7 +33,7 @@ const ThreadReplies: React.FC<ThreadRepliesProps> = ({
 
     try {
       setIsAddingReply(true);
-      const reply = await forumService.addReply(threadId, newReply, 'user123');
+      const reply = await forumService.addReply(threadId, newReply, 'user123', { threadId, body: newReply, authorId: 'user123' });
       onReplyAdded(reply);
       setNewReply('');
       setError('');

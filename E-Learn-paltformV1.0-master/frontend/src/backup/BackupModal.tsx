@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Modal from '../UI/Modal';
-import Button from '../UI/Button';
-import { backupService } from '../../backup.service';
+import Modal from '../UI/modal';
+import Button from '../UI/button';
+import { backupService } from '../services/backup.service';
 
 interface BackupModalProps {
   isOpen: boolean;
@@ -14,12 +14,15 @@ const BackupModal: React.FC<BackupModalProps> = ({ isOpen, onClose }) => {
 
   const handleBackup = async () => {
     setIsBackuping(true);
-    setBackupStatus('');
+    setBackupStatus(''); // Reset backup status before starting the backup
 
     try {
-      const result = await backupService.scheduleBackup();
+      console.log('Starting backup...');  // Debugging log
+      const result = await backupService.scheduleBackup(); 
+      console.log('Backup Result:', result);  // Debugging log
       setBackupStatus('Backup scheduled successfully! Check your MongoDB Compass.');
     } catch (error) {
+      console.error('Error scheduling backup:', error);  // Debugging log
       setBackupStatus('Backup failed. Please try again.');
     } finally {
       setIsBackuping(false);

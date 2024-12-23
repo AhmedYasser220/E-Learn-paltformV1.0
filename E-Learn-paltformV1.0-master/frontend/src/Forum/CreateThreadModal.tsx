@@ -1,8 +1,7 @@
-// src/components/Forum/CreateThreadModal.tsx
 import React, { useState } from 'react';
-import { forumService } from '../../forum.service';
-import Modal from '../UI/Modal';
-import Button from '../UI/Button';
+import Modal from '../UI/modal';
+import Button from '../UI/button';
+import { forumService } from '../services/forum.service';
 
 interface CreateThreadModalProps {
   isOpen: boolean;
@@ -14,7 +13,7 @@ interface CreateThreadModalProps {
 const CreateThreadModal: React.FC<CreateThreadModalProps> = ({ 
   isOpen, 
   onClose, 
-  courseId,
+  courseId, 
   onThreadCreated 
 }) => {
   const [title, setTitle] = useState('');
@@ -29,37 +28,35 @@ const CreateThreadModal: React.FC<CreateThreadModalProps> = ({
 
     try {
       setIsCreating(true);
-      // Replace with actual user ID in a real application
-      await forumService.createThread(courseId, title, 'user123');
+      console.log('Creating thread with title:', title);  // Debugging log
+      const response = await forumService.createThread(courseId, title, 'user123', { courseId, title, authorId: 'user123' });
+      console.log('Thread Created:', response);  // Debugging log
       onThreadCreated();
       onClose();
     } catch (err) {
-      setError('Failed to create thread');
+      console.error('Error creating thread:', err);  // Debugging log
+      setError('Failed to create thread. Please try again.');
     } finally {
       setIsCreating(false);
     }
   };
 
   return (
-    <Modal 
-      isOpen={isOpen} 
-      onClose={onClose} 
-      title="Create New Thread"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="Create New Thread">
       <div className="space-y-4">
         <input
           type="text"
           value={title}
           onChange={(e) => {
             setTitle(e.target.value);
-            setError('');
+            setError(''); // Clear error on user input
           }}
           placeholder="Enter thread title"
-          className="w-full p-2 border rounded-md"
+          className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         
         {error && <p className="text-red-500 text-sm">{error}</p>}
-        
+
         <Button 
           onClick={handleCreateThread}
           disabled={isCreating}

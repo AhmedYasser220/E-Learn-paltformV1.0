@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ForumThread } from './models/forum.model';
@@ -6,47 +6,11 @@ import axios from 'axios';
 
 const API_URL = 'mongodb://localhost:27017/e-ler';
 
-export const forumService = {
-  createThread: async (courseId: string, title: string, authorId: string) => {
-    try {
-      const response = await axios.post(`${API_URL}/thread`, {
-        courseId,
-        title,
-        authorId
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Thread creation failed:', error);
-      throw error;
-    }
-  },
-
-  addReply: async (threadId: string, body: string, authorId: string) => {
-    try {
-      const response = await axios.post(`${API_URL}/reply/${threadId}`, {
-        body,
-        authorId
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Reply addition failed:', error);
-      throw error;
-    }
-  },
-
-  getThreadsByCourse: async (courseId: string) => {
-    try {
-      const response = await axios.get(`${API_URL}/course/${courseId}`);
-      return response.data;
-    } catch (error) {
-      console.error('Fetching threads failed:', error);
-      throw error;
-    }
-  }
-};
-
 @Injectable()
 export class ForumService {
+  static getThreadsByCourse(courseId: string) {
+    throw new Error('Method not implemented.');
+  }
   constructor(
     @InjectModel(ForumThread.name) private forumModel: Model<ForumThread>
   ) {}
@@ -56,12 +20,19 @@ export class ForumService {
       courseId,
       title,
       authorId,
-      replies: []
+      replies: [],
+      createdAt: new Date()  
     });
     return await thread.save();
   }
 
+  // Function to add a reply to a thread
   async addReply(threadId: string, body: string, authorId: string) {
+    const thread = await this.forumModel.findById(threadId);
+    if (!thread) {
+      throw new NotFoundException('Thread not found');
+    }
+
     return this.forumModel.findByIdAndUpdate(
       threadId,
       { 
@@ -69,7 +40,7 @@ export class ForumService {
           replies: { 
             body, 
             authorId, 
-            createdAt: new Date() 
+            createdAt: new Date()  
           } 
         } 
       },
@@ -78,6 +49,16 @@ export class ForumService {
   }
 
   async getThreadsByCourse(courseId: string) {
-    return this.forumModel.find({ courseId });
+    return this.forumModel.find({ courseId }).sort({ createdAt: -1 });
+  }
+
+  static async fetchThreadsFromBackend(courseId: string) {
+    try {
+      const response = await axios.get(`${API_URL}/course/${courseId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching threads:', error);
+      throw error;
+    }
   }
 }
