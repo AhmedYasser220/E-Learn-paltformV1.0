@@ -8,9 +8,10 @@ import { Model } from 'mongoose';
 export class CourseService {
   constructor(@InjectModel(course.name) private readonly courseModel: Model<course>) {}
 
+
   async searchCourses(filters: any): Promise<course[]> {
     const query = {};
-    if (filters.title) query['title'] = { $regex: filters.title, $options: 'i' }; // Case-insensitive search
+    if (filters.title) query['title'] = { $regex: filters.title, $options: 'i' };
     if (filters.category) query['category'] = filters.category;
     if (filters.difficulty_level) query['difficulty_level'] = filters.difficulty_level;
 
