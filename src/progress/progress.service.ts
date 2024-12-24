@@ -59,6 +59,11 @@ export class ProgressService {
     };
   }
   async getCompletedCourses(userId: string): Promise<Progress[]> {
-    return this.progressModel.find({ userId, completion_percentage: 100 }).exec();
+    return this.progressModel
+      .find({
+        userId,
+        courseCompleted: true, // Filter for completed courses
+      })
+      .exec();
   }
 }

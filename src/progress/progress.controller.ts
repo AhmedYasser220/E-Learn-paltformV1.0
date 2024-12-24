@@ -33,9 +33,10 @@ export class ProgressController {
   async getStudentDashboardMetrics(@Param('userId') userId: string) {
     return await this.progressService.getStudentDashboardMetrics(userId);
   }
-  // track coplete curse
-  @Get('completed/:userId')
-  async getCompletedCourses(@Param('userId') userId: string): Promise<Progress[]> {
+  @Get('user/:userId/completed')
+  async getCompletedCourses(
+    @Param('userId') userId: string,
+  ): Promise<Progress[]> {
     return this.progressService.getCompletedCourses(userId);
   }
 }
