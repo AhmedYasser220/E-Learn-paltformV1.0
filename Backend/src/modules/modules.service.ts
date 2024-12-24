@@ -61,12 +61,8 @@ export class ModulesService {
     return module.save();
   }
   
-  async getModuleById(module_id: string): Promise<ModuleDocument> {
-    const module = await this.moduleModel.findById(module_id).exec();
-    if (!module) {
-      throw new NotFoundException(`Module with ID ${module_id} not found`);
-    }
-    return module;
+  async getModuleById(module_id: string) {
+   return this.moduleModel.findOne({module_id}).exec();
   }
   
   async create(moduleData: CreateModuleDto): Promise<modules> {

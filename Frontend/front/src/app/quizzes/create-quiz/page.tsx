@@ -1,37 +1,43 @@
 "use client";
 
-import { useState } from 'react';
-import { createQuiz } from '../api/quizzes/route';
+import { useState } from "react";
+import { createQuiz } from "../../api/quizzes/route";
 
 const CreateQuiz = () => {
-  const [moduleId, setModuleId] = useState('');
+  const [moduleId, setModuleId] = useState("");
   const [userPerformance, setUserPerformance] = useState(0);
   const [questionCount, setQuestionCount] = useState(0);
-  const [questionTypes, setQuestionTypes] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [questionTypes, setQuestionTypes] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await createQuiz({
+      const newQuiz = {
         module_id: moduleId,
         userPerformance,
         questionCount,
-        questionTypes: questionTypes.split(','),
-      });
-      setSuccess('Quiz created successfully!');
-      setError('');
+        questionTypes: questionTypes.split(",").map((type) => type.trim()),
+      };
+      await createQuiz(newQuiz); // Call the API to create a quiz
+      setSuccess("Quiz created successfully!");
+      setError("");
+      setModuleId("");
+      setUserPerformance(0);
+      setQuestionCount(0);
+      setQuestionTypes("");
     } catch (err) {
-      setError('Failed to create quiz.');
+      setError("Failed to create quiz.");
+      setSuccess("");
     }
   };
 
   return (
     <div>
       <h1>Create a Quiz</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {success && <p style={{ color: "green" }}>{success}</p>}
       <form onSubmit={handleSubmit}>
         <div>
           <label>Module ID:</label>
@@ -76,3 +82,6 @@ const CreateQuiz = () => {
 };
 
 export default CreateQuiz;
+
+
+

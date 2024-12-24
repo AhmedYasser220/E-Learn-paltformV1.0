@@ -24,6 +24,20 @@ async function bootstrap() {
     app.use(cookieParser());
  //   await app.listen(process.env.PORT);
 
+
+//  app.enableCors({
+//   origin: 'http://localhost:3000', // Specify the frontend URL
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow these HTTP methods
+//   allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
+//   credentials: true, // Allow credentials (cookies, authorization headers)
+// });
+
+const cors = require('cors');
+app.use(cors({
+  origin: 'http://localhost:3000', // Allow requests from the frontend
+}));
+
+
   const document = SwaggerModule.createDocument(app,config);
 
   SwaggerModule.setup('api-docs',app,document);

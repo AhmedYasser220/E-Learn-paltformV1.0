@@ -6,8 +6,16 @@ export class quizzes {
   @Prop()
   quiz_id: string;
 
-  @Prop()
-  module_id: string;
+
+    @Prop()
+    quiz_id: String;
+    
+    @Prop()
+    module_id: String;
+    
+    @Prop({ type: [{ questionText: String, options: [String], correctAnswer: String }], required: true })
+    questions: { questionText: string; options: string[]; correctAnswer: string }[];
+
 
   @Prop()
   questions: object[];
