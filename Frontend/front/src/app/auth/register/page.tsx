@@ -1,40 +1,43 @@
 "use client";
 
 import axiosInstance from "@/app/util/axiosInstance";
-import { useRouter } from "next/router";
-
-let backend_url = "htpp://localhost:3001";
-
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
+let backend_url = "http://localhost:3001";
+
 export default function Register() {
-  const [Email, setEmail] = useState("");
-  const [Name, setName] = useState("");
-  const [Password, setPassword] = useState("");
-  const [role, setrole] = useState("student");
-  const [Profile_Picture_url, setProfile_Picture_url] = useState("");
-  const [created_at, setcreated_at] = useState("");
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("student");
+  const [profile_picture_url, setProfile_Picture_url] = useState("");
   const router = useRouter();
+
   const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault;
+    e.preventDefault();
     try {
       const res = await axiosInstance.post(`${backend_url}/auth/register`, {
-        Email,
-        Name,
-        Password,
+        email, // Match backend DTO
+        name,
+        password,
         role,
-        Profile_Picture_url,
-        created_at,
+        profile_picture_url,
+        created_at: new Date(), // Send valid ISO string
       });
 
-      const { status, data } = res;
-      if (status == 201) {
+      const { status } = res;
+      if (status === 201) {
+        alert("Registration successful!");
         setTimeout(() => {
-          router.push("/login");
+          router.push("/auth/login");
         }, 1000);
       }
-    } catch (err) {
-      alert("Registration falied");
+    } catch (err: any) {
+      console.error("Error during registration:", err.response?.data || err);
+      alert(
+        `Registration failed: ${err.response?.data?.message || err.message}`
+      );
     }
   };
 
@@ -42,42 +45,43 @@ export default function Register() {
     <form onSubmit={handleRegister}>
       <h1>Register</h1>
       <input
-        type="text"
+        type="email"
         placeholder="Email"
-        value={Email}
+        value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
       />
-
+      <br />
       <input
         type="text"
-        placeholder="name"
-        value={Name}
+        placeholder="Name"
+        value={name}
         onChange={(e) => setName(e.target.value)}
         required
       />
-
+      <br />
       <input
-        type="text"
-        placeholder="password"
-        value={Password}
+        type="password"
+        placeholder="Password"
+        value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
       />
-
+      <br />
       <input
         type="text"
-        placeholder="student,Instructor"
+        placeholder="Role (student, instructor)"
         value={role}
-        onChange={(e) => setrole(e.target.value)}
-        required
+        onChange={(e) => setRole(e.target.value)}
       />
+      <br />
       <input
         type="text"
-        placeholder="http//:catimage.google.webp"
-        value={Profile_Picture_url}
+        placeholder="Profile Picture URL"
+        value={profile_picture_url}
         onChange={(e) => setProfile_Picture_url(e.target.value)}
       />
+      <br />
       <button type="submit">Register</button>
     </form>
   );
