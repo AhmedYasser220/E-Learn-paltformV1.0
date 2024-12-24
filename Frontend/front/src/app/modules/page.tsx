@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import Layout from "../components/layout";
 import apiClient from "../services/api";
+import Link from "next/link";
 
 const ModulesPage: React.FC = () => {
   const { module_id } = useParams();
@@ -63,7 +64,7 @@ console.log('modules',modules)
     <Layout>
       <div className="container mx-auto p-4 space-y-8">
         {/* Check Module Access Section */}
-        <section>
+        {/* <section>
           <h1 className="text-xl font-bold mb-4">Check Module Access</h1>
           <div className="space-y-4">
             <input
@@ -82,7 +83,7 @@ console.log('modules',modules)
             {accessResult && <p className="text-green-500">{accessResult}</p>}
             {accessError && <p className="text-red-500">{accessError}</p>}
           </div>
-        </section>
+        </section> */}
 
         {/* Available Modules Section */}
         <section>
@@ -110,6 +111,9 @@ console.log('modules',modules)
                     <p>{module.content}</p>
                   </li>
                 ))}
+                <Link href={`/modules/${module_id}`}>
+                <button>View Module</button>
+                </Link>
               </ul>
             )}
             {modules.length === 0 && !modulesError && performance !== undefined && (
@@ -119,6 +123,11 @@ console.log('modules',modules)
             )}
           </div>
         </section>
+      </div>
+      <div style={{marginTop:'40px'}}>
+      <Link href={`/modules/add-question`}>
+      <button>Add Question to modules</button>
+      </Link>
       </div>
     </Layout>
   );

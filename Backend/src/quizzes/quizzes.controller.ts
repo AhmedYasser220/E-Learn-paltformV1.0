@@ -34,7 +34,7 @@ export class QuizzesController {
  }
 
  // Get a quiz by ID
- @Roles(Role.Admin, Role.Instructor, Role.Student)
+ @Roles(Role.Admin, Role.Instructor)
  @Get(':quiz_id')
  async getQuizById(@Param('quiz_id') quiz_id: string) {
    const quiz = await this.quizService.getQuizById(quiz_id);

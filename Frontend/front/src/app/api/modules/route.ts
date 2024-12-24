@@ -56,3 +56,14 @@ export const addQuestionToModule = async (questionDto: {
     throw new Error(error.message || "An unexpected error occurred");
   }
 };
+
+export const fetchModuleById = async (moduleId: string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/modules/${moduleId}`);
+    return response.data; // Return the fetched module data
+  } catch (error) {
+    console.error('Error fetching module by ID:', error);
+    throw new Error('Failed to fetch module by ID');
+  }
+};
+

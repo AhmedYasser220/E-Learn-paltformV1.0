@@ -43,4 +43,15 @@ async addQuestion(@Body() questionDto: AddQuestionDto) {
   return this.modulesService.addQuestionToBank(questionDto);
 }
 
+
+@Roles(Role.Admin, Role.Instructor)
+@Get(':module_id')
+async getModuleById(@Param('module_id') module_id: string) {
+  const module = await this.modulesService.getModuleById(module_id); 
+  if (!module) {
+    throw new Error(`Module with ID ${module_id} not found`); 
+  }
+  return module;
+}
+
 }
