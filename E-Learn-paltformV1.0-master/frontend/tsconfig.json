@@ -1,36 +1,39 @@
 {
   "compilerOptions": {
-    /* Language and Environment */
-    "target": "es5",                                /* Set to ES5 for broad browser compatibility */
-    "lib": ["dom", "esnext"],                       /* Include necessary libraries */
-    "jsx": "react-jsx",                             /* Ensure JSX syntax works with React */
-    "esModuleInterop": true,                        /* Enable ES module interop for compatibility with CommonJS modules */
-    "allowSyntheticDefaultImports": true,           /* Allow default imports for modules without default export */
-    "strict": true,                                 /* Enable strict type checking */
-    "forceConsistentCasingInFileNames": true,       /* Ensure consistent casing of file names in imports */
-
-    /* Modules */
-    "module": "ESNext",                             /* Use the latest module system */
-    "moduleResolution": "node",                     /* Resolve modules using Node's algorithm */
-    "resolveJsonModule": true,                      /* Allow importing of JSON files */
-    "baseUrl": ".",                                 /* Base directory to resolve non-relative module names */
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": ".",
     "paths": {
-      "*": ["node_modules/*", "src/types/*"]        /* Define paths to resolve custom types */
+      "@/components/*": ["components/*"],
+      "@/pages/*": ["pages/*"],
+      "@/utils/*": ["utils/*"],
+      "@/styles/*": ["styles/*"],
+      "@/hooks/*": ["hooks/*"],
+      "@/*": ["./*"]
     },
-
-    /* Emit */
-    "sourceMap": true,                              /* Enable source maps for better debugging */
-    "outDir": "./build",                            /* Specify output directory */
-    "removeComments": true,                         /* Remove comments in the emitted JavaScript */
-    "noEmitOnError": true,                          /* Prevent emitting files if there are errors */
-
-    /* Type Checking */
-    "skipLibCheck": true                            /* Skip type checking of declaration files */
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
-    "src"                                            /* Include source files from the src folder */
+    "**/*.ts",
+    "**/*.tsx",
+    "next-env.d.ts",
+    ".next/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"                                   /* Exclude node_modules from compilation */
-  ]
+  "exclude": ["node_modules"]
 }
