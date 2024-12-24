@@ -17,10 +17,10 @@ export const checkModuleAccess = async (moduleId: string, studentPerformance: nu
   }
 };
 
-// Get available modules for a student based on their performance
+
 export const getAvailableModules = async (performance: number) => {
   try {
-    const response = await axios.get(`${BASE_URL}/available`, {
+    const response = await axios.get(`${BASE_URL}/modules/available`, {
       params: { performance },
     });
     return response.data; // List of modules
@@ -31,7 +31,6 @@ export const getAvailableModules = async (performance: number) => {
     throw new Error(error.message || "An unexpected error occurred");
   }
 };
-
 // Add a question to a module's question bank
 export const addQuestionToModule = async (questionDto: {
   module_id: string;

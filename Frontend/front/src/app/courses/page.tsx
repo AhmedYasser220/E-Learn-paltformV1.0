@@ -46,6 +46,11 @@ const CoursesPage : React.FC = () => {
              Edit Course
            </button>
             </Link>
+            <Link href={`/courses/version/${course.course_Id}`}>
+            <button className="px-4 py-2 mt-2 bg-blue-500 text-white rounded">
+             View course versions
+           </button>
+            </Link>
             </li>
           ))}
         </ul>

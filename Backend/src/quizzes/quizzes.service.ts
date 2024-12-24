@@ -26,9 +26,9 @@ export class QuizzesService {
       throw new Error(`Module with ID ${module_id} does not exist`);
     } 
 
-    if (!moduleExists.questionBank || moduleExists.questionBank.length === 0) {
-      throw new Error(`No questions available in the question bank for module ID ${module_id}`);
-    }
+    // if (!moduleExists.questionBank || moduleExists.questionBank.length === 0) {
+    //   throw new Error(`No questions available in the question bank for module ID ${module_id}`);
+    // }
     const difficulty = this.determineDifficulty(userPerformance);
   
 
