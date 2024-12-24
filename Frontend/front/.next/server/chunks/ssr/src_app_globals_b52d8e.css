@@ -1,0 +1,22 @@
+/* [project]/src/app/globals.css [app-client] (css) */
+nav ul {
+  display: flex;
+  background-color: #333;
+  padding: 1rem;
+}
+
+nav ul li {
+  list-style: none;
+  margin-right: 1rem;
+}
+
+nav ul li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+nav ul li a:hover {
+  text-decoration: underline;
+}
+
+/*# sourceMappingURL=src_app_globals_b52d8e.css.map*/
