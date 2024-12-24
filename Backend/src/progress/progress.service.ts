@@ -26,7 +26,6 @@ export class ProgressService {
     @InjectModel(quizzes.name) private readonly quizModel: Model<quizzes>,
   ) {}
 
-
   async createOrUpdateProgress(
     createProgressDto: CreateProgressDto,
   ): Promise<progress> {
@@ -39,13 +38,13 @@ export class ProgressService {
       courseRating,
       instructorRating,
     } = createProgressDto;
-  
+
     // Check if progress record already exists
     const existingProgress = await this.progressModel.findOne({
       userId,
       courseId,
     });
-  
+
     if (existingProgress) {
       // Update the existing progress record
       existingProgress.completion_percentage = completion_percentage;
@@ -53,7 +52,7 @@ export class ProgressService {
         existingProgress.courseCompleted = true;
         existingProgress.completedAt = completedAt || new Date(); // Set `completedAt` only if the course is completed
       }
-  
+
       // Update moduleRatings if provided
       if (moduleRatings) {
         existingProgress.moduleRatings = {
@@ -61,17 +60,17 @@ export class ProgressService {
           ...moduleRatings,
         };
       }
-  
+
       // Update courseRating if provided
       if (courseRating !== undefined) {
         existingProgress.courseRating = courseRating;
       }
-  
+
       // Update instructorRating if provided
       if (instructorRating !== undefined) {
         existingProgress.instructorRating = instructorRating;
       }
-  
+
       return await existingProgress.save();
     } else {
       // Create a new progress record
@@ -79,17 +78,18 @@ export class ProgressService {
         userId,
         courseId,
         completion_percentage,
-        completedAt: completion_percentage >= 100 ? completedAt || new Date() : null, // Set `completedAt` only if the course is completed
+        completedAt:
+          completion_percentage >= 100 ? completedAt || new Date() : null, // Set `completedAt` only if the course is completed
         courseCompleted: completion_percentage >= 100, // Mark course as completed if 100%
         moduleRatings: moduleRatings || {}, // Default to an empty object if not provided
         courseRating: courseRating || null, // Default to null if not provided
         instructorRating: instructorRating || null, // Default to null if not provided
       });
-  
+
       return await newProgress.save();
     }
   }
-  
+
   // Get the user's progress in all courses
   async getUserProgress(userId: string): Promise<progress[]> {
     return this.progressModel.find({ userId }).exec();
@@ -103,7 +103,14 @@ export class ProgressService {
     return this.progressModel.findOne({ userId, courseId }).exec();
   }
 
-
+  async getCompletedCourses(userId: string): Promise<progress[]> {
+    return this.progressModel
+      .find({
+        userId,
+        courseCompleted: true, // Filter for completed courses
+      })
+      .exec();
+  }
   //-----------------------------------------------------------------------------------------
   async getInstructorAnalytics(
     instructorId: string,

@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Module, ModuleDocument, Question } from './Model/modules.model';
 import { Model } from 'mongoose';
 import { AddQuestionDto } from './dto/addQuestion.dto';
+import { CreateModuleDto } from './dto/createModule.dto';
+import { UpdateModuleDto } from './dto/updateModule.dto';
 @Injectable()
 export class ModulesService {
     // "i made it like this because he is confused wuth the names"
@@ -67,7 +69,55 @@ export class ModulesService {
     return module;
   }
   
+  async create(moduleData: CreateModuleDto): Promise<Module> {
+    const newModule = new this.moduleModel(moduleData);
+    return await newModule.save();
+  }
+
+  async findAll(courseId: string): Promise<Module[]> {
+    return this.moduleModel.find({ course_id: courseId });
+  }
+
+  async findById(moduleId: string): Promise<Module> {
+    const module = await this.moduleModel.findById(moduleId);
+    if (!module) {
+      throw new NotFoundException('Module not found');
+    }
+    return module;
+  }
+
+  async update(
+    moduleId: string,
+    updateData: UpdateModuleDto,
+  ): Promise<Module> {
+    const updatedModule = await this.moduleModel.findByIdAndUpdate(
+      moduleId,
+      updateData,
+      { new: true },
+    );
+    if (!updatedModule) {
+      throw new NotFoundException('Module not found');
+    }
+    return updatedModule;
+  }
+
+  async delete(moduleId: string): Promise<void> {
+    const deletedModule = await this.moduleModel.findByIdAndDelete(moduleId);
+    if (!deletedModule) {
+      throw new NotFoundException('Module not found');
+    }
+  }
+
   
+async addFileToModule(moduleId: string, filePath: string): Promise<void> {
+  const module = await this.moduleModel.findById(moduleId);
+  if (!module) {
+    throw new Error('Module not found');
+  }
+  module.resources = module.resources || [];
+  module.resources.push(filePath);
+  await module.save();
+}
 
 }
 
