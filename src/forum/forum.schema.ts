@@ -1,16 +1,20 @@
-// forum.schema.ts
-import { Schema, Document } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
 
-export const ForumSchema = new Schema({
-  courseId: { type: String, required: true, unique: true },
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
-});
+@Schema()
+export class Forum {
+  @Prop({ required: true })
+  courseId: string; // The ID of the course this forum is associated with
 
-export interface Forum extends Document {
-  courseId: string;
-  title: string;
+  @Prop({ required: true })
+  name: string;
+
+  @Prop({ required: true })
   description: string;
+
+  @Prop({ default: Date.now })
   createdAt: Date;
 }
+
+export type ForumDocument = HydratedDocument<Forum>;
+export const ForumSchema = SchemaFactory.createForClass(Forum);

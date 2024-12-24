@@ -1,61 +1,79 @@
-// src/forum/forum.service.ts
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Forum, ForumDocument } from './schemas/forum.schema';
+import { Thread, ThreadDocument } from './schemas/thread.schema';
+import { Message, MessageDocument } from './schemas/message.schema';
 import { CreateForumDto } from './dto/create-forum.dto';
 import { CreateThreadDto } from './dto/create-thread.dto';
-import { CreateReplyDto } from './dto/create-reply.dto';
-import { Forum } from './schemas/forum.schema';
-import { Thread } from './schemas/thread.schema';
-import { Reply } from './schemas/reply.schema';
-import { User } from '../user/Models/user.model'; // Import the User schema
+import { CreateMessageDto } from './dto/create-message';
 
 @Injectable()
 export class ForumService {
   constructor(
-    @InjectModel('Forum') private forumModel: Model<Forum>,
-    @InjectModel('Thread') private threadModel: Model<Thread>,
-    @InjectModel('Reply') private replyModel: Model<Reply>,
-    @InjectModel('User') private userModel: Model<User>, // Injecting user model to validate roles
+    @InjectModel('Forum') private readonly forumModel: Model<ForumDocument>,
+    @InjectModel('Thread') private readonly threadModel: Model<ThreadDocument>,
+    @InjectModel('Message') private readonly messageModel: Model<MessageDocument>,
   ) {}
 
+  // Create a forum
   async createForum(createForumDto: CreateForumDto): Promise<Forum> {
-    const createdForum = new this.forumModel(createForumDto);
-    return createdForum.save();
-  }
 
-  async createThread(createThreadDto: CreateThreadDto, userId: string): Promise<Thread> {
-    // Ensure only students can create threads of type "question"
-    const user = await this.userModel.findById(userId);
-    if (!user || user.role !== 'student') {
-      throw new UnauthorizedException('Only students can create questions.');
+    const forum = new this.forumModel(createForumDto);
+    try {
+      const createdForum = await this.forumModel.create(createForumDto);
+      return createdForum;
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new Error(`Duplicate forum with courseId ${createForumDto.courseId}`);
+      }
+      throw error;  // Rethrow other errors
     }
     
-    createThreadDto.type = 'question'; // Set type to "question" for threads created by students
-    const createdThread = new this.threadModel(createThreadDto);
-    return createdThread.save();
+   
   }
 
-  async createReply(createReplyDto: CreateReplyDto, userId: string): Promise<Reply> {
-    // Ensure only instructors can reply or post announcements
-    const user = await this.userModel.findById(userId);
-    if (!user || user.role !== 'instructor') {
-      throw new UnauthorizedException('Only instructors can reply or post announcements.');
+  // Create a thread within a forum
+  async createThread(createThreadDto: CreateThreadDto, userId: string, role: string): Promise<Thread> {
+    if (role !== 'student') {
+      throw new UnauthorizedException('Only students can create threads.');
     }
 
-    const createdReply = new this.replyModel(createReplyDto);
-    return createdReply.save();
+    const thread = new this.threadModel({
+      ...createThreadDto,
+      createdBy: userId,
+      messages: [],
+    });
+
+    return thread.save();
   }
 
-  async getForums(courseId: string): Promise<Forum[]> {
-    return this.forumModel.find({ courseId }).exec();
-  }
+  // Add a message to a thread
+  async addMessage(createMessageDto: CreateMessageDto, userId: string, role: string): Promise<Message> {
+    const { threadId, type } = createMessageDto;
 
-  async getThreads(courseId: string): Promise<Thread[]> {
-    return this.threadModel.find({ courseId }).exec();
-  }
+    // Role-based checks
+    if (type === 'question' && role !== 'student') {
+      throw new UnauthorizedException('Only students can ask questions.');
+    }
+    if ((type === 'reply' || type === 'announcement') && role !== 'instructor') {
+      throw new UnauthorizedException('Only instructors can reply or make announcements.');
+    }
 
-  async getReplies(threadId: string): Promise<Reply[]> {
-    return this.replyModel.find({ threadId }).exec();
+    const message = new this.messageModel({
+      ...createMessageDto,
+      createdBy: userId,
+      createdAt: new Date(),
+    });
+
+    // Save message and update thread
+    await message.save();
+    await this.threadModel.findByIdAndUpdate(
+      threadId,
+      { $push: { messages: message._id } },
+      { new: true },
+    );
+
+    return message;
   }
 }

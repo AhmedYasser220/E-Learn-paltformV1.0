@@ -1,18 +1,21 @@
-// src/forum/schemas/thread.schema.ts
-import { Schema, Document } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Types } from 'mongoose';
+import { Message } from './message.schema';
 
-export const ThreadSchema = new Schema({
-  title: { type: String, required: true },
-  content: { type: String, required: true },
-  courseId: { type: String, required: true }, // The course the thread belongs to
-  type: { type: String, enum: ['question'], required: true }, // "question" type for threads
-  createdAt: { type: Date, default: Date.now },
-});
-
-export interface Thread extends Document {
-  title: string;
-  content: string;
+@Schema()
+export class Thread {
+  @Prop({ required: true })
   courseId: string;
-  type: 'question'; // Type of the message: question only for threads
-  createdAt: Date;
+
+  @Prop({ required: true })
+  title: string;
+
+  @Prop({ required: true })
+  createdBy: string;
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Message' }] })
+  messages: Message[];
 }
+
+export type ThreadDocument = HydratedDocument<Thread>;
+export const ThreadSchema = SchemaFactory.createForClass(Thread);
