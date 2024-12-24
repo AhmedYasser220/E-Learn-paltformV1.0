@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Param, Body, NotFoundException } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
 import { QuizzesService } from './quizzes.service';
 import { CreateQuizDto } from './dto/createQuiz.dto';
 import { Roles , Role} from '../auth//decorators/roles.decorator'; 
@@ -7,8 +7,8 @@ export class QuizzesController {
   constructor(private readonly quizService:QuizzesService) {} // Inject the QuizzesService to use its methods
 
   // Create quiz 
-  @Roles(Role.Instructor)
-   @Post()
+    @Roles(Role.Instructor)
+    @Post()
    async createQuiz(@Body() createQuizDto: CreateQuizDto) {
     const { module_id, userPerformance, questionCount, questionTypes } = createQuizDto;
   
@@ -25,25 +25,24 @@ export class QuizzesController {
     );
   }
   
-  // get quiz by id 
-  @Roles(Role.Admin, Role.Instructor,Role.Student)
-  @Get(':quiz_id')
-  async getQuizById(@Param('quiz_id') quiz_id: string) {
-  const quiz = await this.quizService.getQuizById(quiz_id);
-  if (!quiz) {
-    throw new Error(`Quiz with ID ${quiz_id} not found`);
-  }
-  return quiz;
-}
- // Get quizzes based on student's enrolled modules
- @Get('by-email/:email')
- async getQuizzesByStudentEmail(@Param('email') email: string) {
-   try {
-     const quizzes = await this.quizService.getQuizzesByStudentEmail(email);
-     return quizzes;
-   } catch (error) {
-     throw new Error('Error fetching quizzes: ' + error.message);
-   }
+ // Get all quizzes
+ @Roles(Role.Admin, Role.Instructor)
+//  @Get() 
+ @Get('quizzes')// Adjusted to be a more specific base route
+ async getQuizzes() {
+   return this.quizService.getQuizzes();
  }
+
+ // Get a quiz by ID
+ @Roles(Role.Admin, Role.Instructor, Role.Student)
+ @Get(':quiz_id')
+ async getQuizById(@Param('quiz_id') quiz_id: string) {
+   const quiz = await this.quizService.getQuizById(quiz_id);
+   if (!quiz) {
+     throw new Error(`Quiz with ID ${quiz_id} not found`);
+   }
+   return quiz;
+ }
+
 }
 

@@ -1,39 +1,31 @@
 "use client";
 import { useEffect, useState } from 'react';
 import Layout from "../components/layout";
+import Link from 'next/link';
+import { getAllCourses } from '../api/courses/route';
 
 const CoursesPage : React.FC = () => {
  // const router = useRouter();
   const [courses, setCourses] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
  
 
   useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        console.log('Fetching courses...');
-        const response = await fetch('/api/courses');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+      const fetchCourses = async () => {
+        try {
+          const quizzesData = await getAllCourses();
+          setCourses(quizzesData); // Store quizzes
+        } catch (err: any) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
         }
-        const data = await response.json();
-        console.log('API Response:', data); // Check the API response
-        setCourses(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error('Failed to fetch courses:', error);
-        setCourses([]); // Handle errors gracefully
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
   
-    fetchCourses();
-  }, []);
+      fetchCourses();
+    }, []);
   
-  
-
- 
-
   return (
     <Layout>
     <div className="container mx-auto p-4">
@@ -48,13 +40,12 @@ const CoursesPage : React.FC = () => {
             <li key={course._id} className="p-4 border rounded">
               <h2 className="font-bold">{course.title}</h2>
               <p>{course.description}</p>
-             {/* Only use router.push after ensuring client-side rendering */}
-             <button
-              //  onClick={() => router.push(`/courses/${course._id}/edit`)}
-                className="px-4 py-2 mt-2 bg-blue-500 text-white rounded"
-              >
-                Edit Course
-              </button>
+            {/* Use Link for Edit Course navigation */}
+            <Link href={`/courses/${course.course_Id}`}>
+            <button className="px-4 py-2 mt-2 bg-blue-500 text-white rounded">
+             Edit Course
+           </button>
+            </Link>
             </li>
           ))}
         </ul>
@@ -65,6 +56,7 @@ const CoursesPage : React.FC = () => {
 };
 
 export default CoursesPage;
+
 
 
 

@@ -1,30 +1,49 @@
 // src/app/api/courses/route.ts
-
-import { NextResponse } from 'next/server';
 import axios from 'axios';
 
 const BASE_URL = 'http://localhost:4000'; // Replace with your backend base URL
 
-export async function GET() {
+
+export interface Course {
+  course_Id: string;
+  title: string;
+  description: string;
+  category: string;
+  difficulty_level: string;
+  // Add any other fields that your course model may have
+}
+
+export interface UpdateCourseDto {
+  title?: string;
+  description?: string;
+  category?: string;
+  difficulty_level?: string;
+  updated_by?: string; // Optional, default to 'System' if not provided
+}
+
+
+export const getAllCourses = async (): Promise<Course[]> => {
   try {
     const response = await axios.get(`${BASE_URL}/courses/courses`);
-    return NextResponse.json(response.data);
-  } catch (error) {
-    console.error('Error fetching courses:', error);
-    return NextResponse.json({ error: 'Failed to fetch courses' }, { status: 500 });
+    return response.data;
+  } catch (error: any) { // Use `any` to bypass the unknown type
+    console.error('Error fetching courses:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Failed to fetch courses');
   }
-}
+};
 
-
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
-  const { id } = params; // Extract course ID from the route
-  const updateData = await req.json(); // Parse the request body
-
+export const updateCourse = async (
+  course_Id: string,
+  updateData: UpdateCourseDto
+): Promise<any> => {
   try {
-    const response = await axios.put(`${BASE_URL}/courses/${id}`, updateData);
-    return NextResponse.json(response.data);
-  } catch (error) {
-    console.error('Error updating course:', error);
-    return NextResponse.json({ error: 'Failed to update course' }, { status: 500 });
+    const response = await axios.put(`${BASE_URL}/courses/${course_Id}`, updateData);
+    return response.data;
+  } catch (error: any) { // Use `any` to bypass the unknown type
+    console.error('Error updating course:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Failed to update course');
   }
-}
+};
+
+
+

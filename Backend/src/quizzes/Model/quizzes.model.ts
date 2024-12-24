@@ -11,8 +11,8 @@ export class quizzes{
     @Prop()
     module_id: String;
     
-    @Prop()
-    questions: Object[];
+    @Prop({ type: [{ questionText: String, options: [String], correctAnswer: String }], required: true })
+    questions: { questionText: string; options: string[]; correctAnswer: string }[];
 
     @Prop()
     created_at: Date;

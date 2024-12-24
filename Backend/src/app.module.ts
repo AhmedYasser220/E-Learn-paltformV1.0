@@ -22,7 +22,7 @@ import { configDotenv } from 'dotenv';
     AuthModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
    // MongooseModule.forRoot(process.env.MONGO_URI),
-     MongooseModule.forRoot('mongodb://localhost/e-learning')
+     MongooseModule.forRoot('mongodb://localhost:27017/e-learning')
 
      // 'mongodb+srv://Wightnight120:Qazxsw!!@e-learndb.ksmzg.mongodb.net/',
     //MongooseModule.forRoot('mongodb+srv://Wightnight120:Qazxsw!!@e-learndb.ksmzg.mongodb.net/'),
