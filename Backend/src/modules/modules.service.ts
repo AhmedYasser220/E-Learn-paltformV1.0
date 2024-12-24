@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Module, ModuleDocument, Question } from './Model/modules.model';
+import { modules, ModuleDocument, Question } from './Model/modules.model';
 import { Model } from 'mongoose';
 import { AddQuestionDto } from './dto/addQuestion.dto';
 import { CreateModuleDto } from './dto/createModule.dto';
@@ -30,7 +30,7 @@ export class ModulesService {
     return this.moduleModel.find({ difficultyLevel: { $lte: difficulty } }).exec();
   }
   // to add Questions in the module (deh 8er el Questions el fe quizzes)
-  async addQuestionToBank(questionDto: AddQuestionDto): Promise<Module> {
+  async addQuestionToBank(questionDto: AddQuestionDto): Promise<modules> {
     const module = await this.moduleModel.findById(questionDto.module_id).exec();
     if (!module) {
       throw new NotFoundException(`Module with ID ${questionDto.module_id} not found`);
@@ -69,16 +69,16 @@ export class ModulesService {
     return module;
   }
   
-  async create(moduleData: CreateModuleDto): Promise<Module> {
+  async create(moduleData: CreateModuleDto): Promise<modules> {
     const newModule = new this.moduleModel(moduleData);
     return await newModule.save();
   }
 
-  async findAll(courseId: string): Promise<Module[]> {
+  async findAll(courseId: string): Promise<modules[]> {
     return this.moduleModel.find({ course_id: courseId });
   }
 
-  async findById(moduleId: string): Promise<Module> {
+  async findById(moduleId: string): Promise<modules> {
     const module = await this.moduleModel.findById(moduleId);
     if (!module) {
       throw new NotFoundException('Module not found');
@@ -89,7 +89,7 @@ export class ModulesService {
   async update(
     moduleId: string,
     updateData: UpdateModuleDto,
-  ): Promise<Module> {
+  ): Promise<modules> {
     const updatedModule = await this.moduleModel.findByIdAndUpdate(
       moduleId,
       updateData,

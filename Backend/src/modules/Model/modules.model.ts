@@ -35,7 +35,7 @@ export type QuestionDocument = HydratedDocument<Question>;
 
 // Define the modules schema
 @Schema()
-export class Module {
+export class modules {
   @IsNotEmpty()
   @IsString()
   @Prop({ required: true })
@@ -55,7 +55,6 @@ export class Module {
   @IsString()
   @Prop({ required: true })
   content: string;
-
 
   @IsOptional()
   @Prop({ type: [String], required: false })
@@ -78,5 +77,5 @@ export class Module {
 }
 
 // Create the Module schema
-export const ModuleSchema = SchemaFactory.createForClass(Module);
-export type ModuleDocument = HydratedDocument<Module>;
+export const ModulesSchema = SchemaFactory.createForClass(modules);
+export type ModuleDocument = HydratedDocument<modules>;

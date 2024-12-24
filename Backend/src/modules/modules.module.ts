@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ModulesService } from './modules.service';
 import { ModulesController } from './modules.controller';
-import { ModuleSchema} from './Model/modules.model';
+import { ModulesSchema} from './Model/modules.model';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'module', schema: ModuleSchema }]),
+    MongooseModule.forFeature([{ name: 'module', schema: ModulesSchema }]),
     MulterModule.register({
       storage: diskStorage({
         destination: './uploads',
