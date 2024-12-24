@@ -1,8 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Module, ModuleDocument, Question } from './Model/modules.model';
+import { modules, ModuleDocument, Question } from './Model/modules.model';
 import { Model } from 'mongoose';
 import { AddQuestionDto } from './dto/addQuestion.dto';
+import { CreateModuleDto } from './dto/createModule.dto';
+import { UpdateModuleDto } from './dto/updateModule.dto';
 @Injectable()
 export class ModulesService {
     // "i made it like this because he is confused wuth the names"
@@ -28,7 +30,7 @@ export class ModulesService {
     return this.moduleModel.find({ difficultyLevel: { $lte: difficulty } }).exec();
   }
   // to add Questions in the module (deh 8er el Questions el fe quizzes)
-  async addQuestionToBank(questionDto: AddQuestionDto): Promise<Module> {
+  async addQuestionToBank(questionDto: AddQuestionDto): Promise<modules> {
     const module = await this.moduleModel.findById(questionDto.module_id).exec();
     if (!module) {
       throw new NotFoundException(`Module with ID ${questionDto.module_id} not found`);
@@ -63,7 +65,55 @@ export class ModulesService {
    return this.moduleModel.findOne({module_id}).exec();
   }
   
+  async create(moduleData: CreateModuleDto): Promise<modules> {
+    const newModule = new this.moduleModel(moduleData);
+    return await newModule.save();
+  }
+
+  async findAll(courseId: string): Promise<modules[]> {
+    return this.moduleModel.find({ course_id: courseId });
+  }
+
+  async findById(moduleId: string): Promise<modules> {
+    const module = await this.moduleModel.findById(moduleId);
+    if (!module) {
+      throw new NotFoundException('Module not found');
+    }
+    return module;
+  }
+
+  async update(
+    moduleId: string,
+    updateData: UpdateModuleDto,
+  ): Promise<modules> {
+    const updatedModule = await this.moduleModel.findByIdAndUpdate(
+      moduleId,
+      updateData,
+      { new: true },
+    );
+    if (!updatedModule) {
+      throw new NotFoundException('Module not found');
+    }
+    return updatedModule;
+  }
+
+  async delete(moduleId: string): Promise<void> {
+    const deletedModule = await this.moduleModel.findByIdAndDelete(moduleId);
+    if (!deletedModule) {
+      throw new NotFoundException('Module not found');
+    }
+  }
+
   
+async addFileToModule(moduleId: string, filePath: string): Promise<void> {
+  const module = await this.moduleModel.findById(moduleId);
+  if (!module) {
+    throw new Error('Module not found');
+  }
+  module.resources = module.resources || [];
+  module.resources.push(filePath);
+  await module.save();
+}
 
 }
 

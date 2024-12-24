@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
 
 @Schema()
@@ -57,8 +58,22 @@ export class Course {
   @Prop({ type: [CourseVersion], default: [] })
   versions: CourseVersion[]; // Embedded array of versions
 
-  @Prop({ type: [String], required: false })
-  multimedia_resources?: string[];
+  @IsOptional()
+  @Prop({
+    type: [
+      {
+        filePath: { type: String, required: true },
+        isOutdated: { type: Boolean, default: false },
+      },
+    ],
+    required: false,
+  })
+  multimedia_resources?: { filePath: string; isOutdated: boolean }[];
+
+  @IsNotEmpty()
+  @Prop({ required: true, default: true })
+  is_available: boolean;
+
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);

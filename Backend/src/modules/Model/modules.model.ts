@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { IsDate, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class Question {
   @Prop({ required: true })
@@ -34,24 +35,35 @@ export type QuestionDocument = HydratedDocument<Question>;
 
 // Define the modules schema
 @Schema()
-export class Module {
+export class modules {
+  @IsNotEmpty()
+  @IsString()
   @Prop({ required: true })
   module_id: string;
 
+  @IsNotEmpty()
+  @IsString()
   @Prop({ required: true })
   course_id: string;
 
+  @IsNotEmpty()
+  @IsString()
   @Prop({ required: true })
   title: string;
 
+  @IsNotEmpty()
+  @IsString()
   @Prop({ required: true })
   content: string;
 
-  @Prop({ required: true })
-  resources: string[];
+  @IsOptional()
+  @Prop({ type: [String], required: false })
+  resources?: string[];
 
-  @Prop({ required: true })
-  created_at: Date;
+  @IsOptional()
+  @IsDate()
+  @Prop({ required: false })
+  created_at?: Date;
 
   @Prop({ required: true })
   difficultyLevel: number; // 1 = Easy, 2 = Medium, 3 = Hard
@@ -65,5 +77,5 @@ export class Module {
 }
 
 // Create the Module schema
-export const ModuleSchema = SchemaFactory.createForClass(Module);
-export type ModuleDocument = HydratedDocument<Module>;
+export const ModulesSchema = SchemaFactory.createForClass(modules);
+export type ModuleDocument = HydratedDocument<modules>;
