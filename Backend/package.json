@@ -28,8 +28,12 @@
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/schedule": "^4.1.1",
+<<<<<<< HEAD:Backend/package.json
     "@nestjs/swagger": "^8.1.0",
     "axios": "^1.7.8",
+=======
+    "axios": "^1.7.9",
+>>>>>>> origin/seria:package.json
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
@@ -39,10 +43,15 @@
     "cookie-parser": "^1.4.7",
 
     "cron": "^3.2.1",
+<<<<<<< HEAD:Backend/package.json
     "dotenv": "^16.4.7",
     "mongoose": "^8.8.3",
     "multer": "^1.4.5-lts.1",
     "npmlog": "^7.0.1",
+=======
+    "dotenv": "^16.4.6",
+    "mongoose": "^8.9.0",
+>>>>>>> origin/seria:package.json
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.0",
